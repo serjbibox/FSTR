@@ -3,7 +3,6 @@ package apicontroller
 import (
 	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 
 	"github.com/serjbibox/FSTR/dbcontroller"
@@ -11,40 +10,33 @@ import (
 )
 
 func SubmitData(w http.ResponseWriter, r *http.Request) {
-	w.Header().Set("Content-Type", "application/json")
+	var err error
 	p := jsoncontroller.NewPereval()
-	if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
-		resp := make(map[string]string)
-		resp["message"] = fmt.Sprintf("ошибка: %s", err)
-		jsonResp, err := json.Marshal(resp)
-		if err != nil {
-			log.Println(err)
-		}
-		w.WriteHeader(http.StatusServiceUnavailable)
-		w.Write(jsonResp)
-		log.Println(err)
+	if err = json.NewDecoder(r.Body).Decode(&p); err != nil {
+		sendResponseErr(w, err)
 		return
 	}
-	if id, err := dbcontroller.AddData(&p); err != nil {
-		resp := make(map[string]string)
-		resp["message"] = fmt.Sprintf("ошибка: %s", err)
-		jsonResp, err := json.Marshal(resp)
-		if err != nil {
-			log.Println(err)
-		}
-		w.WriteHeader(http.StatusServiceUnavailable)
-		w.Write(jsonResp)
-		log.Println(err)
+	var id string
+	if id, err = dbcontroller.AddData(&p); err != nil {
+		sendResponseErr(w, err)
 		return
-	} else {
-		resp := make(map[string]string)
-		resp["message"] = "OK, ID: " + id
-		jsonResp, err := json.Marshal(resp)
-		if err != nil {
-			log.Println(err)
-		}
-		w.WriteHeader(http.StatusOK)
-		w.Write(jsonResp)
 	}
+	sendResponse(w, id)
+}
 
+func sendResponse(w http.ResponseWriter, data string) {
+	resp := make(map[string]string)
+	resp["message"] = "OK, ID: " + data
+	jsonResp, _ := json.Marshal(resp)
+	w.WriteHeader(http.StatusOK)
+	w.Write(jsonResp)
+}
+
+func sendResponseErr(w http.ResponseWriter, err error) {
+	resp := make(map[string]string)
+	w.Header().Set("Content-Type", "application/json")
+	resp["message"] = fmt.Sprintf("ошибка: %s", err)
+	jsonResp, _ := json.Marshal(resp)
+	w.WriteHeader(http.StatusServiceUnavailable)
+	w.Write(jsonResp)
 }

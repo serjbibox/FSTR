@@ -20,7 +20,7 @@ func DbConnect() {
 	if err != nil {
 		log.Println(err)
 	} else {
-		log.Println("DataBase connection OK")
+		log.Println("Установлено соединение с БД")
 	}
 	DB = db
 }
@@ -44,9 +44,8 @@ func ConnStringConfig() string {
 }
 func readEnvironment(key string) string {
 	if env, ok := os.LookupEnv(key); !ok {
-		log.Println(errors.New("no such environment"))
+		log.Println(errors.New("Системная переменная не найдена: " + key))
 		return ""
-
 	} else {
 		return env
 	}
