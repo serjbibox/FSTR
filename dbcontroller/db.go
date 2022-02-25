@@ -12,7 +12,7 @@ const DbName = "FSTR"
 var DB *sql.DB
 var DbConnString string
 
-func Connect() {
+func DbConnect() {
 	if DbConnString == "" {
 		DbConnString = ConnStringConfig()
 	}
@@ -37,6 +37,8 @@ func ConnStringConfig() string {
 		readEnvironment("FSTR_DB_PASS") +
 		"@" +
 		readEnvironment("FSTR_DB_HOST") +
+		":" +
+		readEnvironment("FSTR_DB_PORT") +
 		"/" +
 		DbName + "?sslmode=disable"
 }

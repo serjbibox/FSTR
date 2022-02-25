@@ -8,13 +8,3 @@ type response struct {
 func NewResponse() response {
 	return response{}
 }
-
-const (
-	new      = "new"
-	pending  = "pending"
-	resolved = "resolved"
-	accepted = "accepted"
-	rejected = "rejected"
-)
-
-var Status string = new
