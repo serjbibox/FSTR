@@ -1,0 +1,29 @@
+{
+  "id":"12211",
+  "beautyTitle":"Алабель",
+  "title":"Пхия",
+  "other_titles":"Триев",
+  "connect":"dfsf",
+
+  "add_time": "2021-09-22 13:18:13",
+  "user": {"id":"ddd"},
+
+   "coords":{
+  "latitude": "45.3842",
+  "longitude": "7.1525",
+  "height": "1200"},
+
+  "type": "pass",
+
+  "level":{"winter": "fdfg",
+  "summer": "1А",
+  "autumn": "1А",
+  "spring": ""},
+
+  "images": [
+{"url":"http://...", "title":"Подъём. Фото №1"},
+{"url":"http://...", "title":"Подъём. Фото №2"},
+{"url":"http://...", "title":"Седловина"},
+{"url":"http://...", "title":"Спуск. Фото №99"}
+]
+}
