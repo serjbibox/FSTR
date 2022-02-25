@@ -7,44 +7,62 @@ import (
 	"os"
 )
 
-const DbName = "FSTR"
+const (
+	FSTR_DB_LOGIN = "FSTR_DB_LOGIN"
+	FSTR_DB_PASS  = "FSTR_DB_PASS"
+	FSTR_DB_HOST  = "FSTR_DB_HOST"
+	FSTR_DB_PORT  = "FSTR_DB_PORT"
+	FSTR_DB_NAME  = "FSTR"
+)
 
 var DB *sql.DB
 var DbConnString string
 
-func DbConnect() {
+func DbConnect() error {
+	var err error
 	if DbConnString == "" {
-		DbConnString = ConnStringConfig()
+		if DbConnString, err = ConnStringConfig(); err != nil {
+			return err
+		}
 	}
-	db, err := sql.Open("postgres", DbConnString)
+	DB, err = sql.Open("postgres", DbConnString)
 	if err != nil {
-		log.Println(err)
+		return err
 	} else {
 		log.Println("Установлено соединение с БД")
 	}
-	DB = db
+	return nil
 }
 
-func ConnStringConfig() string {
-	//os.Setenv("FSTR_DB_HOST", "@127.0.0.1:5432/")
-	//os.Setenv("FSTR_DB_HOST", "@35.239.250.100:5432/")
-	//os.Setenv("FSTR_DB_PORT", "5432")
-	//os.Setenv("FSTR_DB_LOGIN", "fstr")
-	//os.Setenv("FSTR_DB_PASS", "123456")
+func ConnStringConfig() (string, error) {
+	m := map[string]string{
+		FSTR_DB_LOGIN: "",
+		FSTR_DB_PASS:  "",
+		FSTR_DB_HOST:  "",
+		FSTR_DB_PORT:  "",
+	}
+	for key, _ := range m {
+		if d := readEnvironment(key); d == "" {
+			return "", errors.New("Системная переменная не найдена: " + key)
+		} else {
+			m[key] = d
+		}
+	}
+
 	return "postgres://" +
-		readEnvironment("FSTR_DB_LOGIN") +
+		m[FSTR_DB_LOGIN] +
 		":" +
-		readEnvironment("FSTR_DB_PASS") +
+		m[FSTR_DB_PASS] +
 		"@" +
-		readEnvironment("FSTR_DB_HOST") +
+		m[FSTR_DB_HOST] +
 		":" +
-		readEnvironment("FSTR_DB_PORT") +
+		m[FSTR_DB_PORT] +
 		"/" +
-		DbName + "?sslmode=disable"
+		FSTR_DB_NAME + "?sslmode=disable", nil
 }
+
 func readEnvironment(key string) string {
 	if env, ok := os.LookupEnv(key); !ok {
-		log.Println(errors.New("Системная переменная не найдена: " + key))
 		return ""
 	} else {
 		return env
