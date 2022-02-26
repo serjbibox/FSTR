@@ -13,3 +13,14 @@ servers:
     description: 
 
 paths:
+/sdsd
+/api:
+  get:
+    description: Describe this route
+    summary: Describe this route
+    responses:
+    type: object
+    properties:
+      name:
+        type: string
+        example: example
