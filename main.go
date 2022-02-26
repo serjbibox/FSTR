@@ -14,7 +14,7 @@ import (
 	_ "github.com/lib/pq"
 )
 
-const port = ":85"
+const port = ":8080"
 
 func main() {
 	r := mux.NewRouter()
