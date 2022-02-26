@@ -8,14 +8,29 @@ import (
 	"github.com/serjbibox/FSTR/apicontroller"
 	_ "github.com/serjbibox/FSTR/apicontroller"
 	_ "github.com/serjbibox/FSTR/dbcontroller"
+	_ "github.com/serjbibox/FSTR/docs"
 	_ "github.com/serjbibox/FSTR/jsoncontroller"
 
 	//_ "github.com/gorilla/mux"
 	_ "github.com/lib/pq"
+	//swaggerFiles "github.com/swaggo/files"
+	//"github.com/swaggo/http-swagger"
 )
 
 const port = ":8080"
 
+// @title Blueprint Swagger API
+// @version 1.0
+// @description Swagger API for Golang Project Blueprint.
+// @termsOfService http://swagger.io/terms/
+
+// @contact.name API Support
+// @contact.email martin7.heinz@gmail.com
+
+// @license.name MIT
+// @license.url https://github.com/MartinHeinz/go-project-blueprint/blob/master/LICENSE
+
+// @BasePath /api/v1
 func main() {
 	r := mux.NewRouter()
 	r.HandleFunc("/submitData", apicontroller.SubmitData).Methods("POST")
