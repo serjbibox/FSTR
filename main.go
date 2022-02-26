@@ -14,6 +14,14 @@ import (
 	_ "github.com/lib/pq"
 )
 
+const port = ":85"
+
+func main() {
+	r := mux.NewRouter()
+	r.HandleFunc("/submitData", apicontroller.SubmitData).Methods("POST")
+	log.Panic(http.ListenAndServe(port, r))
+}
+
 /*
 GET /submitData/:id/status — получить статус модерации отправленных данных.
 PUT /submitData/:id — отредактировать существующую запись (замена), если она в статусе new.
@@ -24,11 +32,3 @@ GET /submitData/:id — получить одну запись (перевал) 
 При создании записи в БД, бэк возвращает фронту id и фронт этот id сохраняет у себя локально.
 За счёт этого может редактировать записи, которые ещё не отрезолвлены модератором.
 */
-
-const port = ":85"
-
-func main() {
-	r := mux.NewRouter()
-	r.HandleFunc("/submitData", apicontroller.SubmitData).Methods("POST")
-	log.Panic(http.ListenAndServe(port, r))
-}
