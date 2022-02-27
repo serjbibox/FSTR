@@ -1,4 +1,4 @@
-package jsoncontroller
+package models
 
 type Pereval struct {
 	ID          string `json:"id"`

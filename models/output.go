@@ -1,4 +1,4 @@
-package jsoncontroller
+package models
 
 type response struct {
 	Status  int    `json:"status"`

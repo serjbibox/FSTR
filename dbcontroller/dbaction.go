@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/serjbibox/FSTR/jsoncontroller"
+	"github.com/serjbibox/FSTR/models"
 )
 
 const (
@@ -16,7 +16,7 @@ const (
 	rejected = "rejected"
 )
 
-func AddData(p *jsoncontroller.Pereval) (id string, err error) {
+func AddData(p *models.Pereval) (id string, err error) {
 	var t time.Time
 	err = DbConnect()
 	if err != nil {
