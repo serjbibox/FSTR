@@ -5,9 +5,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
-	_ "github.com/go-chi/chi"
-	"github.com/serjbibox/FSTR/apicontroller"
-	_ "github.com/serjbibox/FSTR/apicontroller"
+	"github.com/serjbibox/FSTR/api"
 	_ "github.com/serjbibox/FSTR/dbcontroller"
 
 	_ "github.com/serjbibox/FSTR/jsoncontroller"
@@ -29,8 +27,9 @@ const port = ":8080"
 // @BasePath /api/v1
 func main() {
 	r := chi.NewRouter()
+	//r.Get("/*", httpSwagger.Handler(httpSwagger.URL("http://propane-facet-342315.ue.r.appspot.com/swagger/doc.json"))) // API definition
 	r.Get("/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:8080/swagger/doc.json"))) // API definition
-	r.Post("/submitData", apicontroller.SubmitData)
+	r.Post("/submitData", api.SubmitData)
 	log.Panic(http.ListenAndServe(port, r))
 }
 
