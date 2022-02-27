@@ -3,10 +3,8 @@ module github.com/serjbibox/FSTR
 go 1.17
 
 require (
-	github.com/go-chi/chi v1.5.4
+	github.com/gorilla/mux v1.8.0
 	github.com/lib/pq v1.10.4
-	github.com/swaggo/http-swagger v1.2.5
-	github.com/swaggo/swag v1.8.0
 )
 
 require (
@@ -20,9 +18,11 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/mailru/easyjson v0.7.7 // indirect
 	github.com/swaggo/files v0.0.0-20210815190702-a29dd2bc99b2 // indirect
-	golang.org/x/net v0.0.0-20220225172249-27dd8689420f // indirect
+	github.com/swaggo/http-swagger v1.2.5 // indirect
+	github.com/swaggo/swag v1.8.0 // indirect
+	golang.org/x/net v0.0.0-20210805182204-aaa1db679c0d // indirect
 	golang.org/x/sys v0.0.0-20220224120231-95c6836cb0e7 // indirect
 	golang.org/x/text v0.3.7 // indirect
-	golang.org/x/tools v0.1.9 // indirect
+	golang.org/x/tools v0.1.7 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 )
