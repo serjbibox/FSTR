@@ -10,7 +10,6 @@ import (
 
 	_ "github.com/serjbibox/FSTR/models"
 
-	//_ "github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 	_ "github.com/serjbibox/FSTR/docs"
 	httpSwagger "github.com/swaggo/http-swagger"

@@ -23,6 +23,9 @@ func AddData(p *models.Pereval) (id string, err error) {
 		return "", fmt.Errorf("%w", err)
 	}
 	defer DB.Close()
+	if err := p.Validate(); err != nil {
+		return "", fmt.Errorf("%w", err)
+	}
 	if t, err = time.Parse("2006-01-02 15:04:05", p.AddTime); err != nil {
 		return "", fmt.Errorf("%w", err)
 	}
