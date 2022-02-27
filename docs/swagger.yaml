@@ -1,0 +1,22 @@
+basePath: /api/v1
+info:
+  contact:
+    email: serj_bibox@mail.ru
+    name: API Support
+  description: API для взаимодействия приложения с сервером БД ФСТР.
+  title: ФСТР API
+  version: "1.0"
+paths:
+  /users/{id}:
+    get:
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses: {}
+      summary: Retrieves user based on given ID
+swagger: "2.0"

@@ -4,36 +4,33 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gorilla/mux"
+	"github.com/go-chi/chi"
+	_ "github.com/go-chi/chi"
 	"github.com/serjbibox/FSTR/apicontroller"
 	_ "github.com/serjbibox/FSTR/apicontroller"
 	_ "github.com/serjbibox/FSTR/dbcontroller"
-	_ "github.com/serjbibox/FSTR/docs"
+
 	_ "github.com/serjbibox/FSTR/jsoncontroller"
 
 	//_ "github.com/gorilla/mux"
 	_ "github.com/lib/pq"
-	//swaggerFiles "github.com/swaggo/files"
-	//"github.com/swaggo/http-swagger"
+	_ "github.com/serjbibox/FSTR/docs"
+	httpSwagger "github.com/swaggo/http-swagger"
 )
 
 const port = ":8080"
 
-// @title Blueprint Swagger API
+// @title ФСТР API
 // @version 1.0
-// @description Swagger API for Golang Project Blueprint.
-// @termsOfService http://swagger.io/terms/
-
+// @description API для взаимодействия приложения с сервером БД ФСТР.
 // @contact.name API Support
-// @contact.email martin7.heinz@gmail.com
-
-// @license.name MIT
-// @license.url https://github.com/MartinHeinz/go-project-blueprint/blob/master/LICENSE
+// @contact.email serj_bibox@mail.ru
 
 // @BasePath /api/v1
 func main() {
-	r := mux.NewRouter()
-	r.HandleFunc("/submitData", apicontroller.SubmitData).Methods("POST")
+	r := chi.NewRouter()
+	r.Get("/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:8080/swagger/doc.json"))) // API definition
+	r.Post("/submitData", apicontroller.SubmitData)
 	log.Panic(http.ListenAndServe(port, r))
 }
 

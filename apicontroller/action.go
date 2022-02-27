@@ -9,6 +9,10 @@ import (
 	"github.com/serjbibox/FSTR/jsoncontroller"
 )
 
+// submitData godoc
+// @Summary Retrieves user based on given ID
+// @Produce json
+// @Router /submitData [post]
 func SubmitData(w http.ResponseWriter, r *http.Request) {
 	var err error
 	p := jsoncontroller.NewPereval()
