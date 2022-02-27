@@ -8,7 +8,7 @@ import (
 	"github.com/serjbibox/FSTR/api"
 	_ "github.com/serjbibox/FSTR/dbcontroller"
 
-	_ "github.com/serjbibox/FSTR/jsoncontroller"
+	_ "github.com/serjbibox/FSTR/models"
 
 	//_ "github.com/gorilla/mux"
 	_ "github.com/lib/pq"
