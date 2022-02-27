@@ -1,6 +1,10 @@
 package models
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+	"time"
+)
 
 type Pereval struct {
 	ID          string `json:"id"`
@@ -9,7 +13,8 @@ type Pereval struct {
 	OtherTitles string `json:"other_titles"`
 	Connect     string `json:"connect"`
 	AddTime     string `json:"add_time"`
-	User        User   `json:"user"`
+	ParsedTime  time.Time
+	User        User `json:"user"`
 	Coords      struct {
 		Latitude  string `json:"latitude"`
 		Longitude string `json:"longitude"`
@@ -39,7 +44,11 @@ func (p *Pereval) Validate() error {
 		return errors.New("отсутствует ID пользователя")
 	}
 	if p.AddTime == "" {
-		return errors.New("T0")
+		p.AddTime = "TIMESTAMP WITHOUT TIME ZONE"
+	} else if t, err := time.Parse("2006-01-02 15:04:05", p.AddTime); err != nil {
+		return fmt.Errorf("%w", err)
+	} else {
+		p.ParsedTime = t
 	}
 	return nil
 }
