@@ -9,9 +9,15 @@ import (
 )
 
 // submitData godoc
-// @Summary Retrieves user based on given ID
-// @Produce json
-// @Router /submitData [post]
+// @Summary   Создаёт новую запись в pereval_added
+// @Tags /submitData
+// @Accept    json
+// @Produce   json
+// @Param     input	body	models.Pereval true "карточка объекта"
+// @Success   200  {object}  models.Response
+// @Failure   400  {object}  models.ResponseErr
+// @Failure   503  {object}  models.ResponseErr
+// @Router    /submitData [post]
 func SubmitData(w http.ResponseWriter, r *http.Request) {
 
 	p := models.NewPereval()

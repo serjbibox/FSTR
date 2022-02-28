@@ -7,25 +7,24 @@ import (
 )
 
 type Pereval struct {
-	ID          string `json:"id"`
-	BeautyTitle string `json:"beautyTitle"`
-	Title       string `json:"title"`
-	OtherTitles string `json:"other_titles"`
-	Connect     string `json:"connect"`
-	AddTime     string `json:"add_time"`
-	ParsedTime  time.Time
-	User        User `json:"user"`
+	ID          string `json:"id" example:"125"`
+	BeautyTitle string `json:"beautyTitle" example:"пер. "`
+	Title       string `json:"title" example:"Туя-Ашуу"`
+	OtherTitles string `json:"other_titles" example:"1"`
+	Connect     string `json:"connect" example:" "`
+	AddTime     string `json:"add_time" example:"2021-09-22 13:18:13"`
+	User        User   `json:"user"`
 	Coords      struct {
-		Latitude  string `json:"latitude"`
-		Longitude string `json:"longitude"`
-		Height    string `json:"height"`
+		Latitude  string `json:"latitude" example:"222"`
+		Longitude string `json:"longitude" example:"333"`
+		Height    string `json:"height" example:"444"`
 	} `json:"coords"`
-	Type  string `json:"type"`
+	Type  string `json:"type" example:"pass"`
 	Level struct {
-		Winter string `json:"winter"`
-		Summer string `json:"summer"`
-		Autumn string `json:"autumn"`
-		Spring string `json:"spring"`
+		Winter string `json:"winter" example:"зима"`
+		Summer string `json:"summer" example:"лето"`
+		Autumn string `json:"autumn" example:"осень"`
+		Spring string `json:"spring" example:"весна"`
 	} `json:"level"`
 	Images []Images `json:"images"`
 }

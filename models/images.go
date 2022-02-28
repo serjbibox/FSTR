@@ -1,6 +1,6 @@
 package models
 
 type Images struct {
-	URL   string `json:"url"`
-	Title string `json:"title"`
+	URL   string `json:"url" example:"http://..."`
+	Title string `json:"title" example:"Спуск. Фото №99"`
 }

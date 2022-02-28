@@ -17,26 +17,14 @@ import (
 
 const port = ":8080"
 
-// @title ФСТР API
-// @version 1.0
-// @description API для взаимодействия приложения с сервером БД ФСТР.
-// @contact.name API Support
-// @contact.email serj_bibox@mail.ru
+// @title          ФСТР API
+// @version        1.0
+// @description    API для взаимодействия приложения с сервером БД ФСТР.
+// @contact.name   API Support
+// @contact.email  serj_bibox@mail.ru
 
-// @BasePath /api/v1
+// @BasePath
 func main() {
-	/*var s string
-	p := models.NewPereval()
-	p.AddTime = "2021-09-22 13:18:13"
-	if t, err := time.Parse("2006-01-02 15:04:05", p.AddTime); err != nil {
-		log.Println(err)
-		//return fmt.Errorf("%w", err)
-	} else {
-		log.Println(t.Format("2006-01-02 15:04:05"))
-		s = t.String()
-		log.Println(s)
-	}*/
-
 	r := chi.NewRouter()
 	//r.Get("/*", httpSwagger.Handler(httpSwagger.URL("http://propane-facet-342315.ue.r.appspot.com/swagger/doc.json"))) // API definition
 	r.Get("/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:8080/swagger/doc.json"))) // API definition

@@ -1,4 +1,109 @@
-basePath: /api/v1
+definitions:
+  models.Images:
+    properties:
+      title:
+        example: Спуск. Фото №99
+        type: string
+      url:
+        example: http://...
+        type: string
+    type: object
+  models.Pereval:
+    properties:
+      add_time:
+        example: "2021-09-22 13:18:13"
+        type: string
+      beautyTitle:
+        example: 'пер. '
+        type: string
+      connect:
+        example: ' '
+        type: string
+      coords:
+        properties:
+          height:
+            example: "444"
+            type: string
+          latitude:
+            example: "222"
+            type: string
+          longitude:
+            example: "333"
+            type: string
+        type: object
+      id:
+        example: "125"
+        type: string
+      images:
+        items:
+          $ref: '#/definitions/models.Images'
+        type: array
+      level:
+        properties:
+          autumn:
+            example: осень
+            type: string
+          spring:
+            example: весна
+            type: string
+          summer:
+            example: лето
+            type: string
+          winter:
+            example: зима
+            type: string
+        type: object
+      other_titles:
+        example: "1"
+        type: string
+      title:
+        example: Туя-Ашуу
+        type: string
+      type:
+        example: pass
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+    type: object
+  models.Response:
+    description: 'Структура HTTP ответа: если отправка успешна, дополнительно возвращается
+      id вставленной записи.'
+    properties:
+      id:
+        example: "123"
+        type: string
+      message:
+        example: OK
+        type: string
+    type: object
+  models.ResponseErr:
+    description: Структура HTTP ответа об ошибке
+    properties:
+      message:
+        example: 'ошибка: описание ошибки'
+        type: string
+    type: object
+  models.User:
+    properties:
+      email:
+        example: dd@aa.ru
+        type: string
+      fam:
+        example: Скворцов
+        type: string
+      id:
+        example: "11234"
+        type: string
+      name:
+        example: Иван
+        type: string
+      otc:
+        example: Кожедубович
+        type: string
+      phone:
+        example: "+744434555"
+        type: string
+    type: object
 info:
   contact:
     email: serj_bibox@mail.ru
@@ -7,16 +112,33 @@ info:
   title: ФСТР API
   version: "1.0"
 paths:
-  /users/{id}:
-    get:
+  /submitData:
+    post:
+      consumes:
+      - application/json
       parameters:
-      - description: User ID
-        in: path
-        name: id
+      - description: карточка объекта
+        in: body
+        name: input
         required: true
-        type: integer
+        schema:
+          $ref: '#/definitions/models.Pereval'
       produces:
       - application/json
-      responses: {}
-      summary: Retrieves user based on given ID
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/models.ResponseErr'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/models.ResponseErr'
+      summary: Создаёт новую запись в pereval_added
+      tags:
+      - /submitData
 swagger: "2.0"

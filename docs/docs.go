@@ -19,22 +19,197 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/users/{id}": {
-            "get": {
+        "/submitData": {
+            "post": {
+                "consumes": [
+                    "application/json"
+                ],
                 "produces": [
                     "application/json"
                 ],
-                "summary": "Retrieves user based on given ID",
+                "tags": [
+                    "/submitData"
+                ],
+                "summary": "Создаёт новую запись в pereval_added",
                 "parameters": [
                     {
-                        "type": "integer",
-                        "description": "User ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
+                        "description": "карточка объекта",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Pereval"
+                        }
                     }
                 ],
-                "responses": {}
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/models.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseErr"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/models.ResponseErr"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "models.Images": {
+            "type": "object",
+            "properties": {
+                "title": {
+                    "type": "string",
+                    "example": "Спуск. Фото №99"
+                },
+                "url": {
+                    "type": "string",
+                    "example": "http://..."
+                }
+            }
+        },
+        "models.Pereval": {
+            "type": "object",
+            "properties": {
+                "add_time": {
+                    "type": "string",
+                    "example": "2021-09-22 13:18:13"
+                },
+                "beautyTitle": {
+                    "type": "string",
+                    "example": "пер. "
+                },
+                "connect": {
+                    "type": "string",
+                    "example": " "
+                },
+                "coords": {
+                    "type": "object",
+                    "properties": {
+                        "height": {
+                            "type": "string",
+                            "example": "444"
+                        },
+                        "latitude": {
+                            "type": "string",
+                            "example": "222"
+                        },
+                        "longitude": {
+                            "type": "string",
+                            "example": "333"
+                        }
+                    }
+                },
+                "id": {
+                    "type": "string",
+                    "example": "125"
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.Images"
+                    }
+                },
+                "level": {
+                    "type": "object",
+                    "properties": {
+                        "autumn": {
+                            "type": "string",
+                            "example": "осень"
+                        },
+                        "spring": {
+                            "type": "string",
+                            "example": "весна"
+                        },
+                        "summer": {
+                            "type": "string",
+                            "example": "лето"
+                        },
+                        "winter": {
+                            "type": "string",
+                            "example": "зима"
+                        }
+                    }
+                },
+                "other_titles": {
+                    "type": "string",
+                    "example": "1"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Туя-Ашуу"
+                },
+                "type": {
+                    "type": "string",
+                    "example": "pass"
+                },
+                "user": {
+                    "$ref": "#/definitions/models.User"
+                }
+            }
+        },
+        "models.Response": {
+            "description": "Структура HTTP ответа: если отправка успешна, дополнительно возвращается id вставленной записи.",
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "123"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "OK"
+                }
+            }
+        },
+        "models.ResponseErr": {
+            "description": "Структура HTTP ответа об ошибке",
+            "type": "object",
+            "properties": {
+                "message": {
+                    "type": "string",
+                    "example": "ошибка: описание ошибки"
+                }
+            }
+        },
+        "models.User": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "dd@aa.ru"
+                },
+                "fam": {
+                    "type": "string",
+                    "example": "Скворцов"
+                },
+                "id": {
+                    "type": "string",
+                    "example": "11234"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Иван"
+                },
+                "otc": {
+                    "type": "string",
+                    "example": "Кожедубович"
+                },
+                "phone": {
+                    "type": "string",
+                    "example": "+744434555"
+                }
             }
         }
     }
@@ -44,7 +219,7 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "",
-	BasePath:         "/api/v1",
+	BasePath:         "",
 	Schemes:          []string{},
 	Title:            "ФСТР API",
 	Description:      "API для взаимодействия приложения с сервером БД ФСТР.",
