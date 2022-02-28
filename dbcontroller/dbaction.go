@@ -22,22 +22,17 @@ func AddData(p *models.Pereval) (id string, err error) {
 		return "", fmt.Errorf("%w", err)
 	}
 	defer DB.Close()
-	if err := p.Validate(); err != nil {
+	pData, err := json.Marshal(p)
+	if err != nil {
 		return "", fmt.Errorf("%w", err)
 	}
-	//if t, err = time.Parse("2006-01-02 15:04:05", p.AddTime); err != nil {
-	//	return "", fmt.Errorf("%w", err)
-	//}
-
-	data, err := json.Marshal(p)
+	iData, err := json.Marshal(p.Images)
 	if err != nil {
 		return "", fmt.Errorf("%w", err)
 	}
 	status := new
-	err = DB.QueryRow("INSERT INTO pereval_added (date_added, raw_data, status) VALUES ($1, $2, $3) RETURNING ID;",
-		p.ParsedTime, data, status).Scan(&id)
-	//err = DB.QueryRow("INSERT INTO pereval_added (date_added, raw_data, status) VALUES ($1, $2, $3) RETURNING ID;",
-	//	"TIMESTAMP WITHOUT TIME ZONE", data, status).Scan(&id)
+	err = DB.QueryRow("INSERT INTO pereval_added (date_added, raw_data, images, status) VALUES ($1, $2, $3, $4) RETURNING ID;",
+		p.AddTime, pData, iData, status).Scan(&id)
 	//result, err := db.Exec("INSERT INTO pereval_added (date_added, raw_data, status) VALUES ($1, $2, $3);", t, data, Status)
 	if err != nil {
 		return "", fmt.Errorf("%w", err)
