@@ -6,26 +6,63 @@ import (
 	"time"
 )
 
-type Pereval struct {
-	ID          string `json:"id" example:"125"`
+type PerevalAdded struct {
+	ID          string `json:"pereval_id" example:"125"`
 	BeautyTitle string `json:"beautyTitle" example:"пер. "`
 	Title       string `json:"title" example:"Туя-Ашуу"`
 	OtherTitles string `json:"other_titles" example:"1"`
 	Connect     string `json:"connect" example:" "`
 	AddTime     string `json:"add_time" example:"2021-09-22 13:18:13"`
-	User        User   `json:"user"`
 	Coords      struct {
-		Latitude  string `json:"latitude" example:"222"`
-		Longitude string `json:"longitude" example:"333"`
-		Height    string `json:"height" example:"444"`
+		Latitude  string `json:"latitude" example:"45.3842"`
+		Longitude string `json:"longitude" example:"7.1525"`
+		Height    string `json:"height" example:"1200"`
 	} `json:"coords"`
 	Type  string `json:"type" example:"pass"`
 	Level struct {
-		Winter string `json:"winter" example:"зима"`
-		Summer string `json:"summer" example:"лето"`
-		Autumn string `json:"autumn" example:"осень"`
-		Spring string `json:"spring" example:"весна"`
+		Winter string `json:"winter" example:" "`
+		Summer string `json:"summer" example:"1A"`
+		Autumn string `json:"autumn" example:"1A"`
+		Spring string `json:"spring" example:" "`
 	} `json:"level"`
+	User User `json:"user"`
+}
+
+func NewPerevalAdded(p *Pereval) PerevalAdded {
+	return PerevalAdded{
+		ID:          p.ID,
+		BeautyTitle: p.BeautyTitle,
+		Title:       p.Title,
+		OtherTitles: p.OtherTitles,
+		Connect:     p.Connect,
+		AddTime:     p.AddTime,
+		Coords:      p.Coords,
+		Type:        p.Type,
+		Level:       p.Level,
+		User:        p.User,
+	}
+}
+
+type Pereval struct {
+	ID          string `json:"pereval_id" example:"125"`
+	BeautyTitle string `json:"beautyTitle" example:"пер. "`
+	Title       string `json:"title" example:"Туя-Ашуу"`
+	OtherTitles string `json:"other_titles" example:"1"`
+	Connect     string `json:"connect" example:" "`
+	AddTime     string `json:"add_time" example:"2021-09-22 13:18:13"`
+	Coords      struct {
+		Latitude  string `json:"latitude" example:"45.3842"`
+		Longitude string `json:"longitude" example:"7.1525"`
+		Height    string `json:"height" example:"1200"`
+	} `json:"coords"`
+	Type  string `json:"type" example:"pass"`
+	Level struct {
+		Winter string `json:"winter" example:" "`
+		Summer string `json:"summer" example:"1A"`
+		Autumn string `json:"autumn" example:"1A"`
+		Spring string `json:"spring" example:" "`
+	} `json:"level"`
+	User   User     `json:"user"`
 	Images []Images `json:"images"`
 }
 
@@ -38,7 +75,7 @@ func NewPereval() Pereval {
 func (p *Pereval) ValidateFields() error {
 	switch {
 	case p.ID == "":
-		return errors.New("отсутствует ID записи")
+		return errors.New("отсутствует ID перевала")
 	case p.User.ID == "":
 		return errors.New("отсутствует ID пользователя")
 	case p.Coords.Height == "":

@@ -90,21 +90,17 @@
                     "properties": {
                         "height": {
                             "type": "string",
-                            "example": "444"
+                            "example": "1200"
                         },
                         "latitude": {
                             "type": "string",
-                            "example": "222"
+                            "example": "45.3842"
                         },
                         "longitude": {
                             "type": "string",
-                            "example": "333"
+                            "example": "7.1525"
                         }
                     }
-                },
-                "id": {
-                    "type": "string",
-                    "example": "125"
                 },
                 "images": {
                     "type": "array",
@@ -117,25 +113,29 @@
                     "properties": {
                         "autumn": {
                             "type": "string",
-                            "example": "осень"
+                            "example": "1A"
                         },
                         "spring": {
                             "type": "string",
-                            "example": "весна"
+                            "example": " "
                         },
                         "summer": {
                             "type": "string",
-                            "example": "лето"
+                            "example": "1A"
                         },
                         "winter": {
                             "type": "string",
-                            "example": "зима"
+                            "example": " "
                         }
                     }
                 },
                 "other_titles": {
                     "type": "string",
                     "example": "1"
+                },
+                "pereval_id": {
+                    "type": "string",
+                    "example": "125"
                 },
                 "title": {
                     "type": "string",

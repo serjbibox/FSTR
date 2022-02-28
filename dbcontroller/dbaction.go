@@ -22,7 +22,8 @@ func AddData(p *models.Pereval) (id string, err error) {
 		return "", fmt.Errorf("%w", err)
 	}
 	defer DB.Close()
-	pData, err := json.Marshal(p)
+	pa := models.NewPerevalAdded(p)
+	pData, err := json.Marshal(pa)
 	if err != nil {
 		return "", fmt.Errorf("%w", err)
 	}

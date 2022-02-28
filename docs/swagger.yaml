@@ -22,18 +22,15 @@ definitions:
       coords:
         properties:
           height:
-            example: "444"
+            example: "1200"
             type: string
           latitude:
-            example: "222"
+            example: "45.3842"
             type: string
           longitude:
-            example: "333"
+            example: "7.1525"
             type: string
         type: object
-      id:
-        example: "125"
-        type: string
       images:
         items:
           $ref: '#/definitions/models.Images'
@@ -41,20 +38,23 @@ definitions:
       level:
         properties:
           autumn:
-            example: осень
+            example: 1A
             type: string
           spring:
-            example: весна
+            example: ' '
             type: string
           summer:
-            example: лето
+            example: 1A
             type: string
           winter:
-            example: зима
+            example: ' '
             type: string
         type: object
       other_titles:
         example: "1"
+        type: string
+      pereval_id:
+        example: "125"
         type: string
       title:
         example: Туя-Ашуу
