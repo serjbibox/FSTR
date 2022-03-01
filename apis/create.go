@@ -1,4 +1,4 @@
-package api
+package apis
 
 import (
 	"encoding/json"
@@ -18,8 +18,7 @@ import (
 // @Failure   400  {object}  models.ResponseErr
 // @Failure   503  {object}  models.ResponseErr
 // @Router    /submitData [post]
-func SubmitData(w http.ResponseWriter, r *http.Request) {
-
+func Create(w http.ResponseWriter, r *http.Request) {
 	p := models.NewPereval()
 	if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
 		SendErr(w, http.StatusServiceUnavailable, err)

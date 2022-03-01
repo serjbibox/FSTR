@@ -43,6 +43,11 @@ func NewPerevalAdded(p *Pereval) PerevalAdded {
 	}
 }
 
+var PerevalRows = []*Pereval{
+	{ID: "4", Title: "4"},
+	{ID: "6", Title: "6"},
+}
+
 type Pereval struct {
 	ID          string `json:"pereval_id" example:"125"`
 	BeautyTitle string `json:"beautyTitle" example:"пер. "`

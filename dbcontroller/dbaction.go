@@ -3,6 +3,7 @@ package dbcontroller
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 
 	"github.com/serjbibox/FSTR/models"
 )
@@ -14,6 +15,24 @@ const (
 	accepted = "accepted"
 	rejected = "rejected"
 )
+
+func GetRow(id string) (p *models.Pereval, err error) {
+	err = DbConnect()
+	if err != nil {
+		return nil, fmt.Errorf("%w", err)
+	}
+	defer DB.Close()
+	var status, pAdded, foo string
+	query := "SELECT * FROM pereval_added WHERE id = ($1);"
+	if err = DB.QueryRow(query, id).Scan(&foo, &foo, &pAdded, &foo, &status); err != nil {
+		return nil, fmt.Errorf("%w", err)
+	}
+	if err = json.Unmarshal([]byte(pAdded), &p); err != nil {
+		return nil, fmt.Errorf("%w", err)
+	}
+	log.Println(status, p.Title, p.AddTime)
+	return p, nil
+}
 
 func AddData(p *models.Pereval) (id string, err error) {
 	//var t time.Time

@@ -4,7 +4,10 @@ go 1.17
 
 require (
 	github.com/go-chi/chi v1.5.4
+	github.com/go-chi/chi/v5 v5.0.7
+	github.com/go-chi/render v1.0.1
 	github.com/lib/pq v1.10.4
+	github.com/serjbibox/FSTR v0.0.0-20220228105427-08a33d2ace7a
 	github.com/swaggo/http-swagger v1.2.5
 	github.com/swaggo/swag v1.8.0
 )
