@@ -1,10 +1,15 @@
 package main
 
 import (
+	"context"
+	"errors"
+	"fmt"
 	"log"
 	"net/http"
 
 	"github.com/serjbibox/FSTR/apis"
+	"github.com/serjbibox/FSTR/dbcontroller"
+	"github.com/serjbibox/FSTR/models"
 
 	//"github.com/go-chi/chi"
 
@@ -31,7 +36,6 @@ const port = ":8080"
 
 // @BasePath
 func main() {
-	//api := apis.Api{}
 	r := chi.NewRouter()
 	r.Use(middleware.RequestID)
 	r.Use(middleware.Logger)
@@ -45,15 +49,15 @@ func main() {
 
 	r.Route("/submitData", func(r chi.Router) {
 		//r.With(paginate).Get("/", ListPass)
-		r.Post("/", apis.Create) // POST /articles
-		//r.Get("/search", SearchPass) // GET /articles/search
+		r.Post("/", apis.Create)
+		//r.Get("/search", SearchPass)
 
-		//r.Route("/{passID}", func(r chi.Router) {
-		r.Route("/:id", func(r chi.Router) {
-			r.Use(apis.PassCtx)      // Load the *Article on the request context
-			r.Get("/", apis.GetPass) // GET /articles/123
-			//r.Put("/", UpdateArticle)    // PUT /articles/123
-			//r.Delete("/", DeleteArticle) // DELETE /articles/123
+		r.Route("/{passID}", func(r chi.Router) {
+			//r.Route("/:id", func(r chi.Router) {
+			r.Use(PassCtx)
+			r.Get("/", apis.GetPass)
+			//r.Put("/", UpdateArticle)
+			//r.Delete("/", DeleteArticle)
 		})
 
 		// GET /articles/whats-up
@@ -86,3 +90,27 @@ GET /submitData/:id — получить одну запись (перевал) 
 При создании записи в БД, бэк возвращает фронту id и фронт этот id сохраняет у себя локально.
 За счёт этого может редактировать записи, которые ещё не отрезолвлены модератором.
 */
+
+func PassCtx(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		var p *models.Pereval
+		var err error
+		//if id := r.URL.Query().Get("passID"); id != "" {
+		if id := chi.URLParam(r, "passID"); id != "" {
+			if p, err = dbcontroller.GetRow(id); err != nil {
+				apis.SendErr(w, r, http.StatusServiceUnavailable, fmt.Errorf("%w", err))
+				return
+			}
+		} else {
+			err = errors.New("URI not found")
+			apis.SendErr(w, r, http.StatusServiceUnavailable, fmt.Errorf("%w", err))
+			return
+		}
+		if err != nil {
+			apis.SendErr(w, r, http.StatusServiceUnavailable, fmt.Errorf("%w", err))
+			return
+		}
+		ctx := context.WithValue(r.Context(), "pass", p)
+		next.ServeHTTP(w, r.WithContext(ctx))
+	})
+}

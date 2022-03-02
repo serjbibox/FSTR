@@ -24,7 +24,7 @@
   "spring": ""},
 
   "images": [
-{"url":"http://...", "title":"Подъём. Фото №1"},
+{"url":"https://avatars.mds.yandex.net/i?id=a467876d3e1b1f0a84050103a206cf81-5858922-images-thumbs&n=13", "title":"Подъём. Фото №1"},
 {"url":"http://...", "title":"Подъём. Фото №2"},
 {"url":"http://...", "title":"Седловина"},
 {"url":"http://...", "title":"Спуск. Фото №99"}
