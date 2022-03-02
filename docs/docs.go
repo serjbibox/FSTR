@@ -40,25 +40,65 @@ const docTemplate = `{
                         "schema": {
                             "$ref": "#/definitions/models.Pereval"
                         }
+                    },
+                    {
+                        "description": "ID созданной записи",
+                        "name": "output",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/apis.Response"
+                        }
                     }
                 ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/models.Response"
+                            "$ref": "#/definitions/apis.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/models.ResponseErr"
+                            "$ref": "#/definitions/apis.ErrResponse"
                         }
                     },
                     "503": {
                         "description": "Service Unavailable",
                         "schema": {
-                            "$ref": "#/definitions/models.ResponseErr"
+                            "$ref": "#/definitions/apis.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/submitData/:id": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "/submitData/:id"
+                ],
+                "summary": "Получает запись из pereval_added по ID записи",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apis.Response"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apis.ErrResponse"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/apis.ErrResponse"
                         }
                     }
                 }
@@ -66,6 +106,38 @@ const docTemplate = `{
         }
     },
     "definitions": {
+        "apis.ErrResponse": {
+            "description": "Структура HTTP ответа об ошибке",
+            "type": "object",
+            "properties": {
+                "code": {
+                    "description": "application-specific error code",
+                    "type": "integer"
+                },
+                "error": {
+                    "description": "application-level error message, for debugging",
+                    "type": "string"
+                },
+                "status": {
+                    "description": "user-level status message",
+                    "type": "string"
+                }
+            }
+        },
+        "apis.Response": {
+            "description": "Структура HTTP ответа: если отправка успешна, дополнительно возвращается id вставленной записи.",
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "123"
+                },
+                "message": {
+                    "type": "string",
+                    "example": "OK"
+                }
+            }
+        },
         "models.Images": {
             "type": "object",
             "properties": {
@@ -75,7 +147,7 @@ const docTemplate = `{
                 },
                 "url": {
                     "type": "string",
-                    "example": "http://..."
+                    "example": "https://avatars.mds.yandex.net/i?id=a467876d3e1b1f0a84050103a206cf81-5858922-images-thumbs\u0026n=13"
                 }
             }
         },
@@ -156,30 +228,6 @@ const docTemplate = `{
                 },
                 "user": {
                     "$ref": "#/definitions/models.User"
-                }
-            }
-        },
-        "models.Response": {
-            "description": "Структура HTTP ответа: если отправка успешна, дополнительно возвращается id вставленной записи.",
-            "type": "object",
-            "properties": {
-                "id": {
-                    "type": "string",
-                    "example": "123"
-                },
-                "message": {
-                    "type": "string",
-                    "example": "OK"
-                }
-            }
-        },
-        "models.ResponseErr": {
-            "description": "Структура HTTP ответа об ошибке",
-            "type": "object",
-            "properties": {
-                "message": {
-                    "type": "string",
-                    "example": "ошибка: описание ошибки"
                 }
             }
         },

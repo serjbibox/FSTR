@@ -11,12 +11,6 @@ import (
 	"github.com/serjbibox/FSTR/dbcontroller"
 	"github.com/serjbibox/FSTR/models"
 
-	//"github.com/go-chi/chi"
-
-	_ "github.com/serjbibox/FSTR/dbcontroller"
-
-	_ "github.com/serjbibox/FSTR/models"
-
 	_ "github.com/lib/pq"
 	_ "github.com/serjbibox/FSTR/docs"
 
@@ -42,7 +36,10 @@ func main() {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.URLFormat)
 	r.Use(render.SetContentType(render.ContentTypeJSON))
-	r.Get("/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:8080/swagger/doc.json"))) // API definition
+	// API definition localhost
+	r.Get("/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:8080/swagger/doc.json")))
+	// API definition
+	//r.Get("/*", httpSwagger.Handler(httpSwagger.URL("http://propane-facet-342315.ue.r.appspot.com/swagger/doc.json")))
 	r.Get("/panic", func(w http.ResponseWriter, r *http.Request) {
 		panic("test")
 	})
@@ -63,21 +60,10 @@ func main() {
 		// GET /articles/whats-up
 		//r.With(ArticleCtx).Get("/{articleSlug:[a-z-]+}", GetArticle)
 	})
-	//r.Get("/*", httpSwagger.Handler(httpSwagger.URL("http://propane-facet-342315.ue.r.appspot.com/swagger/doc.json"))) // API definition
 
 	//r.Post("/submitData", api.Create)
 	//r.Get("/submitData/{id}", api.GetById)
 	log.Panic(http.ListenAndServe(port, r))
-}
-
-// paginate is a stub, but very possible to implement middleware logic
-// to handle the request params for handling a paginated request.
-func paginate(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// just a stub.. some ideas are to look at URL query params for something like
-		// the page number, or the limit, and send a query cursor down the chain
-		next.ServeHTTP(w, r)
-	})
 }
 
 /*
@@ -90,6 +76,8 @@ GET /submitData/:id — получить одну запись (перевал) 
 При создании записи в БД, бэк возвращает фронту id и фронт этот id сохраняет у себя локально.
 За счёт этого может редактировать записи, которые ещё не отрезолвлены модератором.
 */
+
+type Pass string
 
 func PassCtx(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
@@ -110,7 +98,8 @@ func PassCtx(next http.Handler) http.Handler {
 			apis.SendErr(w, r, http.StatusServiceUnavailable, fmt.Errorf("%w", err))
 			return
 		}
-		ctx := context.WithValue(r.Context(), "pass", p)
+		var ps Pass = "pass"
+		ctx := context.WithValue(r.Context(), ps, p)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
 }

@@ -3,6 +3,7 @@ package apis
 import (
 	"encoding/json"
 	"net/http"
+	"strconv"
 
 	"github.com/serjbibox/FSTR/dbcontroller"
 	"github.com/serjbibox/FSTR/models"
@@ -14,9 +15,10 @@ import (
 // @Accept    json
 // @Produce   json
 // @Param     input	body	models.Pereval true "карточка объекта"
-// @Success   200  {object}  models.Response
-// @Failure   400  {object}  models.ResponseErr
-// @Failure   503  {object}  models.ResponseErr
+// @Param     output	body	apis.Response true "ID созданной записи"
+// @Success   200  {object}  apis.Response
+// @Failure   400  {object}  apis.ErrResponse
+// @Failure   503  {object}  apis.ErrResponse
 // @Router    /submitData [post]
 func Create(w http.ResponseWriter, r *http.Request) {
 	p := models.NewPereval()
@@ -38,11 +40,28 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		SendErr(w, r, http.StatusServiceUnavailable, err)
 		return
 	}
-	if _, err := dbcontroller.AddImage(img, &p); err != nil {
+	id := make(map[string]string)
+	if id, err = dbcontroller.AddImage(img, &p); err != nil {
 		SendErr(w, r, http.StatusServiceUnavailable, err)
 		return
 	}
-	if id, err := dbcontroller.AddData(&p); err != nil {
+	imgMap := make(map[string][]int)
+	//var ai []map[string][]int
+	for key, title := range id {
+		imgId, err := strconv.Atoi(key)
+		if err != nil {
+			SendErr(w, r, http.StatusServiceUnavailable, err)
+			return
+		}
+		imgMap[title] = append(imgMap[title], imgId)
+		//ai = append(ai, imgMap)
+		/*		ai = append(ai, models.AddImages{
+					ID:    key,
+					Title: val,
+				})
+		*/
+	}
+	if id, err := dbcontroller.AddData(&p, &imgMap); err != nil {
 		SendErr(w, r, http.StatusServiceUnavailable, err)
 		return
 	} else {

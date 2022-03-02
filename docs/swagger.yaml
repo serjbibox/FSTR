@@ -1,11 +1,35 @@
 definitions:
+  apis.ErrResponse:
+    description: Структура HTTP ответа об ошибке
+    properties:
+      code:
+        description: application-specific error code
+        type: integer
+      error:
+        description: application-level error message, for debugging
+        type: string
+      status:
+        description: user-level status message
+        type: string
+    type: object
+  apis.Response:
+    description: 'Структура HTTP ответа: если отправка успешна, дополнительно возвращается
+      id вставленной записи.'
+    properties:
+      id:
+        example: "123"
+        type: string
+      message:
+        example: OK
+        type: string
+    type: object
   models.Images:
     properties:
       title:
         example: Спуск. Фото №99
         type: string
       url:
-        example: http://...
+        example: https://avatars.mds.yandex.net/i?id=a467876d3e1b1f0a84050103a206cf81-5858922-images-thumbs&n=13
         type: string
     type: object
   models.Pereval:
@@ -65,24 +89,6 @@ definitions:
       user:
         $ref: '#/definitions/models.User'
     type: object
-  models.Response:
-    description: 'Структура HTTP ответа: если отправка успешна, дополнительно возвращается
-      id вставленной записи.'
-    properties:
-      id:
-        example: "123"
-        type: string
-      message:
-        example: OK
-        type: string
-    type: object
-  models.ResponseErr:
-    description: Структура HTTP ответа об ошибке
-    properties:
-      message:
-        example: 'ошибка: описание ошибки'
-        type: string
-    type: object
   models.User:
     properties:
       email:
@@ -123,22 +129,48 @@ paths:
         required: true
         schema:
           $ref: '#/definitions/models.Pereval'
+      - description: ID созданной записи
+        in: body
+        name: output
+        required: true
+        schema:
+          $ref: '#/definitions/apis.Response'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/models.Response'
+            $ref: '#/definitions/apis.Response'
         "400":
           description: Bad Request
           schema:
-            $ref: '#/definitions/models.ResponseErr'
+            $ref: '#/definitions/apis.ErrResponse'
         "503":
           description: Service Unavailable
           schema:
-            $ref: '#/definitions/models.ResponseErr'
+            $ref: '#/definitions/apis.ErrResponse'
       summary: Создаёт новую запись в pereval_added
       tags:
       - /submitData
+  /submitData/:id:
+    get:
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apis.Response'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apis.ErrResponse'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/apis.ErrResponse'
+      summary: Получает запись из pereval_added по ID записи
+      tags:
+      - /submitData/:id
 swagger: "2.0"

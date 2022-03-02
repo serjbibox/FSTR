@@ -48,7 +48,7 @@ func ConnStringConfig() (string, error) {
 	os.Setenv(FSTR_DB_HOST, "35.239.250.100")
 	os.Setenv(FSTR_DB_PORT, "5432")
 	//////////////////////////////////////////////////
-	for key, _ := range m {
+	for key := range m {
 		if d := readEnvironment(key); d == "" {
 			return "", errors.New("Системная переменная не найдена: " + key)
 		} else {

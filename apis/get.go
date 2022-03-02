@@ -10,6 +10,13 @@ import (
 	"github.com/go-chi/render"
 )
 
+// @Summary   Получает запись из pereval_added по ID записи
+// @Tags /submitData/:id
+// @Produce   json
+// @Success   200  {object}  apis.Response
+// @Failure   400  {object}  apis.ErrResponse
+// @Failure   503  {object}  apis.ErrResponse
+// @Router    /submitData/:id [get]
 func GetPass(w http.ResponseWriter, r *http.Request) {
 	if p, ok := r.Context().Value("pass").(*models.Pereval); !ok {
 		err := errors.New("ошибка контекста")
