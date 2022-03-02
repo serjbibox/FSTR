@@ -40,28 +40,19 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		SendErr(w, r, http.StatusServiceUnavailable, err)
 		return
 	}
-	id := make(map[string]string)
-	if id, err = dbcontroller.AddImage(img, &p); err != nil {
+	//m := make(map[string]string)
+	var m map[string]string
+	if m, err = dbcontroller.AddImage(img, &p); err != nil {
 		SendErr(w, r, http.StatusServiceUnavailable, err)
 		return
 	}
-	imgMap := make(map[string][]int)
-	//var ai []map[string][]int
-	for key, title := range id {
-		imgId, err := strconv.Atoi(key)
-		if err != nil {
-			SendErr(w, r, http.StatusServiceUnavailable, err)
-			return
-		}
-		imgMap[title] = append(imgMap[title], imgId)
-		//ai = append(ai, imgMap)
-		/*		ai = append(ai, models.AddImages{
-					ID:    key,
-					Title: val,
-				})
-		*/
+	var imgMap *map[string][]int
+	if imgMap, err = imgData(m); err != nil {
+		SendErr(w, r, http.StatusServiceUnavailable, err)
+		return
 	}
-	if id, err := dbcontroller.AddData(&p, &imgMap); err != nil {
+
+	if id, err := dbcontroller.AddPereval(&p, imgMap); err != nil {
 		SendErr(w, r, http.StatusServiceUnavailable, err)
 		return
 	} else {
@@ -69,13 +60,15 @@ func Create(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-func SendResponse(w http.ResponseWriter, data string) {
-	resp := Response{
-		Message: "OK",
-		ID:      data,
+func imgData(m map[string]string) (*map[string][]int, error) {
+	imgMap := make(map[string][]int)
+	var err error
+	for key, title := range m {
+		imgId, err := strconv.Atoi(key)
+		if err != nil {
+			return nil, err
+		}
+		imgMap[title] = append(imgMap[title], imgId)
 	}
-	jsonResp, _ := json.Marshal(resp)
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	w.Write(jsonResp)
+	return &imgMap, err
 }

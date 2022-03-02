@@ -53,6 +53,7 @@ func main() {
 			//r.Route("/:id", func(r chi.Router) {
 			r.Use(PassCtx)
 			r.Get("/", apis.GetPass)
+			r.Get("/status", apis.GetStatus)
 			//r.Put("/", UpdateArticle)
 			//r.Delete("/", DeleteArticle)
 		})
@@ -72,7 +73,7 @@ PUT /submitData/:id — отредактировать существующую 
 Редактировать можно все поля, кроме ФИО, почта, телефон.
 GET /submitData/ — список всех данных для отображения, которые этот пользователь отправил
 на сервер через приложение с возможностью фильтрации по данным пользователя (ФИО, телефон, почта), если передан объект.
-GET /submitData/:id — получить одну запись (перевал) по её id.
+GET /submitData/:id — получить одну запись (перевал) по её id. OK
 При создании записи в БД, бэк возвращает фронту id и фронт этот id сохраняет у себя локально.
 За счёт этого может редактировать записи, которые ещё не отрезолвлены модератором.
 */
@@ -82,10 +83,14 @@ type Pass string
 func PassCtx(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		var p *models.Pereval
+		status := NewStatusResponse()
+
 		var err error
+		var s string
+		var id string
 		//if id := r.URL.Query().Get("passID"); id != "" {
-		if id := chi.URLParam(r, "passID"); id != "" {
-			if p, err = dbcontroller.GetRow(id); err != nil {
+		if id = chi.URLParam(r, "passID"); id != "" {
+			if p, s, err = dbcontroller.GetRow(id); err != nil {
 				apis.SendErr(w, r, http.StatusServiceUnavailable, fmt.Errorf("%w", err))
 				return
 			}
@@ -98,8 +103,17 @@ func PassCtx(next http.Handler) http.Handler {
 			apis.SendErr(w, r, http.StatusServiceUnavailable, fmt.Errorf("%w", err))
 			return
 		}
-		var ps Pass = "pass"
-		ctx := context.WithValue(r.Context(), ps, p)
+		status.Status = s
+		status.ID = id
+		con := apis.Context{
+			Pereval: p,
+			Status:  status,
+		}
+		ctx := context.WithValue(r.Context(), "pass", &con)
 		next.ServeHTTP(w, r.WithContext(ctx))
 	})
+}
+
+func NewStatusResponse() *apis.StatusResponse {
+	return &apis.StatusResponse{}
 }

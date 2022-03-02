@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/render"
+	"github.com/serjbibox/FSTR/models"
 )
 
 func SendErr(w http.ResponseWriter, r *http.Request, statusCode int, err error) {
@@ -14,4 +15,7 @@ func SendErr(w http.ResponseWriter, r *http.Request, statusCode int, err error) 
 	})
 }
 
-//var ErrNotFound = &ErrResponse{HTTPStatusCode: 404, StatusText: "Resource not found."}
+type Context struct {
+	Pereval *models.Pereval
+	Status  *StatusResponse
+}

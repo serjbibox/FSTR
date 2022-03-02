@@ -8,6 +8,14 @@ import (
 )
 
 const (
+	new      = "new"
+	pending  = "pending"
+	resolved = "resolved"
+	accepted = "accepted"
+	rejected = "rejected"
+)
+
+const (
 	FSTR_DB_LOGIN = "FSTR_DB_LOGIN"
 	FSTR_DB_PASS  = "FSTR_DB_PASS"
 	FSTR_DB_HOST  = "FSTR_DB_HOST"

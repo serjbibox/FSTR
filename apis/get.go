@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/serjbibox/FSTR/models"
-
 	"github.com/go-chi/render"
 )
 
@@ -18,13 +16,13 @@ import (
 // @Failure   503  {object}  apis.ErrResponse
 // @Router    /submitData/:id [get]
 func GetPass(w http.ResponseWriter, r *http.Request) {
-	if p, ok := r.Context().Value("pass").(*models.Pereval); !ok {
-		err := errors.New("ошибка контекста")
+	if ctx, ok := r.Context().Value("pass").(*Context); !ok {
+		err := errors.New("ошибка контекста GetPass")
 		SendErr(w, r, http.StatusServiceUnavailable, fmt.Errorf("%w", err))
 		return
 	} else {
 		if err := render.Render(w, r, &PerevalResponse{
-			Pereval: p,
+			Pereval: ctx.Pereval,
 		}); err != nil {
 			SendErr(w, r, http.StatusServiceUnavailable, fmt.Errorf("%w", err))
 			return
@@ -32,10 +30,16 @@ func GetPass(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-type PerevalResponse struct {
-	*models.Pereval
-}
+func GetStatus(w http.ResponseWriter, r *http.Request) {
+	if ctx, ok := r.Context().Value("pass").(*Context); !ok {
+		err := errors.New("ошибка контекста GetStatus")
+		SendErr(w, r, http.StatusServiceUnavailable, fmt.Errorf("%w", err))
+		return
+	} else {
+		if err := render.Render(w, r, &PerevalResponse{Status: *ctx.Status}); err != nil {
+			SendErr(w, r, http.StatusServiceUnavailable, fmt.Errorf("%w", err))
+			return
+		}
+	}
 
-func (rd *PerevalResponse) Render(w http.ResponseWriter, r *http.Request) error {
-	return nil
 }
