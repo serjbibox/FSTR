@@ -54,7 +54,7 @@ func main() {
 			r.Use(PassCtx)
 			r.Get("/", apis.GetPass)
 			r.Get("/status", apis.GetStatus)
-			//r.Put("/", UpdateArticle)
+			r.Put("/", apis.UpdatePass)
 			//r.Delete("/", DeleteArticle)
 		})
 
@@ -68,7 +68,7 @@ func main() {
 }
 
 /*
-GET /submitData/:id/status — получить статус модерации отправленных данных.
+GET /submitData/:id/status — получить статус модерации отправленных данных. OK
 PUT /submitData/:id — отредактировать существующую запись (замена), если она в статусе new.
 Редактировать можно все поля, кроме ФИО, почта, телефон.
 GET /submitData/ — список всех данных для отображения, которые этот пользователь отправил
