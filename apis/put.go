@@ -1,17 +1,6 @@
 package apis
 
-import (
-	"encoding/json"
-	"errors"
-	"fmt"
-	"log"
-	"net/http"
-
-	"github.com/go-chi/render"
-	"github.com/serjbibox/FSTR/dbcontroller"
-	"github.com/serjbibox/FSTR/models"
-)
-
+/*
 func UpdatePass(w http.ResponseWriter, r *http.Request) {
 	if ctx, ok := r.Context().Value("pass").(*Context); !ok {
 		err := errors.New("ошибка контекста GetStatus")
@@ -28,12 +17,11 @@ func UpdatePass(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-}
-
+}*/
+/*
 func doit(w http.ResponseWriter, r *http.Request, p *models.Pereval) {
 	var err error
-	var p int
-	log.Println(p)
+
 	pnew := models.NewPereval()
 	if err := json.NewDecoder(r.Body).Decode(&pnew); err != nil {
 		SendErr(w, r, http.StatusServiceUnavailable, err)
@@ -49,7 +37,7 @@ func doit(w http.ResponseWriter, r *http.Request, p *models.Pereval) {
 	}
 	pnew.User = p.User
 	var img [][]byte
-	if img, err = GetImage(&pnew); err != nil {
+	if img, err = GetImage(pnew); err != nil {
 		SendErr(w, r, http.StatusServiceUnavailable, err)
 		return
 	}
@@ -71,3 +59,4 @@ func doit(w http.ResponseWriter, r *http.Request, p *models.Pereval) {
 		SendResponse(w, id)
 	}
 }
+*/

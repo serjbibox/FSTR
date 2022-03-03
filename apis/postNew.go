@@ -1,12 +1,12 @@
 package apis
 
 import (
-	"encoding/json"
 	"net/http"
 	"strconv"
 
-	"github.com/serjbibox/FSTR/dbcontroller"
+	"github.com/serjbibox/FSTR/daos"
 	"github.com/serjbibox/FSTR/models"
+	"github.com/serjbibox/FSTR/services"
 )
 
 // submitData godoc
@@ -21,42 +21,48 @@ import (
 // @Failure   503  {object}  apis.ErrResponse
 // @Router    /submitData [post]
 func Create(w http.ResponseWriter, r *http.Request) {
-	p := models.NewPereval()
 	var err error
-	if err := json.NewDecoder(r.Body).Decode(&p); err != nil {
-		SendErr(w, r, http.StatusServiceUnavailable, err)
+	var p *models.Pass
+	s := services.New(daos.NewPassDAO())
+	p, err = s.Create(r)
+	if err != nil {
+		SendErr(w, http.StatusServiceUnavailable, err)
 		return
 	}
-	if err := p.ValidateFields(); err != nil {
-		SendErr(w, r, http.StatusBadRequest, err)
-		return
+	err = s.ValidateFields(p)
+	if err != nil {
+		SendErr(w, http.StatusBadRequest, err)
 	}
-	if err := p.ValidateData(); err != nil {
-		SendErr(w, r, http.StatusServiceUnavailable, err)
+	err = s.ValidateData(p)
+	if err != nil {
+		SendErr(w, http.StatusServiceUnavailable, err)
 		return
 	}
 	var img [][]byte
-	if img, err = GetImage(&p); err != nil {
-		SendErr(w, r, http.StatusServiceUnavailable, err)
+	if img, err = GetImage(p); err != nil {
+		SendErr(w, http.StatusServiceUnavailable, err)
 		return
 	}
-	//m := make(map[string]string)
 	var m map[string]string
-	if m, err = dbcontroller.AddImage(img, &p); err != nil {
-		SendErr(w, r, http.StatusServiceUnavailable, err)
+	if m, err = s.InsertImage(p, img); err != nil {
+		SendErr(w, http.StatusServiceUnavailable, err)
 		return
 	}
 	var imgMap *map[string][]int
 	if imgMap, err = imgData(m); err != nil {
-		SendErr(w, r, http.StatusServiceUnavailable, err)
+		SendErr(w, http.StatusServiceUnavailable, err)
 		return
 	}
 
-	if id, err := dbcontroller.AddPereval(&p, imgMap); err != nil {
-		SendErr(w, r, http.StatusServiceUnavailable, err)
+	if id, err := s.Insert(p, imgMap); err != nil {
+		SendErr(w, http.StatusServiceUnavailable, err)
 		return
 	} else {
-		SendResponse(w, id)
+		SendHttp(w,
+			InsertResponse{
+				Message: "OK",
+				ID:      id,
+			})
 	}
 }
 

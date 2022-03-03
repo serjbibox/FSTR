@@ -8,8 +8,6 @@ import (
 	"net/http"
 
 	"github.com/serjbibox/FSTR/apis"
-	"github.com/serjbibox/FSTR/dbcontroller"
-	"github.com/serjbibox/FSTR/models"
 
 	_ "github.com/lib/pq"
 	_ "github.com/serjbibox/FSTR/docs"
@@ -51,10 +49,11 @@ func main() {
 
 		r.Route("/{passID}", func(r chi.Router) {
 			//r.Route("/:id", func(r chi.Router) {
-			r.Use(PassCtx)
+			r.Use(Ctx)
+
 			r.Get("/", apis.GetPass)
-			r.Get("/status", apis.GetStatus)
-			r.Put("/", apis.UpdatePass)
+			//r.Get("/status", apis.GetStatus)
+			//r.Put("/", apis.UpdatePass)
 			//r.Delete("/", DeleteArticle)
 		})
 
@@ -78,42 +77,15 @@ GET /submitData/:id — получить одну запись (перевал) 
 За счёт этого может редактировать записи, которые ещё не отрезолвлены модератором.
 */
 
-type Pass string
-
-func PassCtx(next http.Handler) http.Handler {
+func Ctx(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		var p *models.Pereval
-		status := NewStatusResponse()
-
-		var err error
-		var s string
-		var id string
-		//if id := r.URL.Query().Get("passID"); id != "" {
-		if id = chi.URLParam(r, "passID"); id != "" {
-			if p, s, err = dbcontroller.GetRow(id); err != nil {
-				apis.SendErr(w, r, http.StatusServiceUnavailable, fmt.Errorf("%w", err))
-				return
-			}
+		if id := chi.URLParam(r, "passID"); id != "" {
+			ctx := context.WithValue(r.Context(), "id", id)
+			next.ServeHTTP(w, r.WithContext(ctx))
 		} else {
-			err = errors.New("URI not found")
-			apis.SendErr(w, r, http.StatusServiceUnavailable, fmt.Errorf("%w", err))
+			err := errors.New("URI not found")
+			apis.SendErr(w, http.StatusServiceUnavailable, fmt.Errorf("%w", err))
 			return
 		}
-		if err != nil {
-			apis.SendErr(w, r, http.StatusServiceUnavailable, fmt.Errorf("%w", err))
-			return
-		}
-		status.Status = s
-		status.ID = id
-		con := apis.Context{
-			Pereval: p,
-			Status:  status,
-		}
-		ctx := context.WithValue(r.Context(), "pass", &con)
-		next.ServeHTTP(w, r.WithContext(ctx))
 	})
-}
-
-func NewStatusResponse() *apis.StatusResponse {
-	return &apis.StatusResponse{}
 }

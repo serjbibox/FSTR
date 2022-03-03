@@ -4,15 +4,36 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/go-chi/render"
 	"github.com/serjbibox/FSTR/models"
 )
 
+type ResponseInterface interface {
+	Send(w http.ResponseWriter)
+}
+
 // @Description Структура HTTP ответа:
 // @Description если отправка успешна, дополнительно возвращается id вставленной записи.
-type Response struct {
-	Message string `json:"message" example:"OK"`
+type PassResponse struct {
+	Pass *models.Pass
+}
+
+func (p PassResponse) Send(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(&p.Pass)
+}
+
+// @Description Структура HTTP ответа:
+// @Description если отправка успешна, дополнительно возвращается id вставленной записи.
+type InsertResponse struct {
 	ID      string `json:"id" example:"123"`
+	Message string `json:"message" example:"OK"`
+}
+
+func (p InsertResponse) Send(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(&p)
 }
 
 // @Description Структура HTTP ответа:
@@ -22,39 +43,20 @@ type StatusResponse struct {
 	Status string `json:"status" example:"new"`
 }
 
-// @Description Структура HTTP ответа об ошибке
-type ErrResponse struct {
-	Err            error `json:"-"` // low-level runtime error
-	HTTPStatusCode int   `json:"-"` // http response status code
-
-	StatusText string `json:"status"`          // user-level status message
-	AppCode    int64  `json:"code,omitempty"`  // application-specific error code
-	ErrorText  string `json:"error,omitempty"` // application-level error message, for debugging
-}
-
-func (e *ErrResponse) Render(w http.ResponseWriter, r *http.Request) error {
-	render.Status(r, e.HTTPStatusCode)
-	return nil
-}
-
-func SendResponse(w http.ResponseWriter, data string) {
-	resp := Response{
-		Message: "OK",
-		ID:      data,
-	}
-	jsonResp, _ := json.Marshal(resp)
+func (p StatusResponse) Send(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	w.Write(jsonResp)
+	json.NewEncoder(w).Encode(&p)
 }
 
-type PerevalResponse struct {
-	*models.Pereval
-	*StatusResponse
-	*Response
-	Status StatusResponse
+// @Description Структура HTTP ответа об ошибке
+type ErrResponse struct {
+	HTTPStatusCode int    `json:"-"`               // http response status code
+	ErrorText      string `json:"error,omitempty"` // application-level error message, for debugging
 }
 
-func (rd *PerevalResponse) Render(w http.ResponseWriter, r *http.Request) error {
-	return nil
+func (err *ErrResponse) Send(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(err.HTTPStatusCode)
+	json.NewEncoder(w).Encode(&err)
 }
