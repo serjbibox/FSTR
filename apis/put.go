@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/go-chi/render"
@@ -31,6 +32,8 @@ func UpdatePass(w http.ResponseWriter, r *http.Request) {
 
 func doit(w http.ResponseWriter, r *http.Request, p *models.Pereval) {
 	var err error
+	var p int
+	log.Println(p)
 	pnew := models.NewPereval()
 	if err := json.NewDecoder(r.Body).Decode(&pnew); err != nil {
 		SendErr(w, r, http.StatusServiceUnavailable, err)
