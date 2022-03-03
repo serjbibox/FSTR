@@ -43,10 +43,10 @@ type StatusResponse struct {
 	Status string `json:"status" example:"new"`
 }
 
-func (p StatusResponse) Send(w http.ResponseWriter) {
+func (s StatusResponse) Send(w http.ResponseWriter) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	json.NewEncoder(w).Encode(&p)
+	json.NewEncoder(w).Encode(&s)
 }
 
 // @Description Структура HTTP ответа об ошибке

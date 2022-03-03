@@ -5,9 +5,8 @@ type Images struct {
 	Title string `json:"title" example:"Спуск. Фото №99"`
 }
 
-type AddImages struct {
-	ID    string `json:"id" example:"2"`
-	Title string `json:"title" example:"Спуск. Фото №99"`
+type AddedImages struct {
+	ImgMap map[string][]int
 }
 
 /*

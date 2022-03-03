@@ -1,62 +1,72 @@
 package apis
 
-/*
+import (
+	"errors"
+	"net/http"
+
+	"github.com/serjbibox/FSTR/daos"
+	"github.com/serjbibox/FSTR/models"
+	"github.com/serjbibox/FSTR/services"
+)
+
 func UpdatePass(w http.ResponseWriter, r *http.Request) {
-	if ctx, ok := r.Context().Value("pass").(*Context); !ok {
-		err := errors.New("ошибка контекста GetStatus")
-		SendErr(w, r, http.StatusServiceUnavailable, fmt.Errorf("%w", err))
+	var err error
+	var replaceId string
+	if id, ok := r.Context().Value("id").(string); !ok {
+		err := errors.New("ошибка контекста GetPass")
+		SendErr(w, http.StatusServiceUnavailable, err)
 		return
 	} else {
-		if ctx.Status.Status == "new" {
-			doit(w, r, ctx.Pereval)
-		}
-
-		if err := render.Render(w, r, &PerevalResponse{Status: *ctx.Status}); err != nil {
-			SendErr(w, r, http.StatusServiceUnavailable, fmt.Errorf("%w", err))
-			return
-		}
+		replaceId = id
 	}
-
-}*/
-/*
-func doit(w http.ResponseWriter, r *http.Request, p *models.Pereval) {
-	var err error
-
-	pnew := models.NewPereval()
-	if err := json.NewDecoder(r.Body).Decode(&pnew); err != nil {
-		SendErr(w, r, http.StatusServiceUnavailable, err)
+	s := services.New(daos.NewPassDAO())
+	var prev *models.Pass
+	if prev, err = s.Get(replaceId); err != nil {
+		SendErr(w, http.StatusServiceUnavailable, err)
 		return
 	}
-	if err := pnew.ValidateFields(); err != nil {
-		SendErr(w, r, http.StatusBadRequest, err)
+
+	var p *models.Pass
+	p, err = s.Create(r)
+	if err != nil {
+		SendErr(w, http.StatusServiceUnavailable, err)
 		return
 	}
-	if err := pnew.ValidateData(); err != nil {
-		SendErr(w, r, http.StatusServiceUnavailable, err)
+	if err = Validate(p, s); err != nil {
+		SendErr(w, http.StatusBadRequest, err)
 		return
 	}
-	pnew.User = p.User
+
+	p.User.Email = prev.User.Email
+	p.User.Name = prev.User.Name
+	p.User.Fam = prev.User.Fam
+	p.User.Otc = prev.User.Otc
+	p.User.Phone = prev.User.Phone
+
 	var img [][]byte
-	if img, err = GetImage(pnew); err != nil {
-		SendErr(w, r, http.StatusServiceUnavailable, err)
+	if img, err = GetImage(p); err != nil {
+		SendErr(w, http.StatusServiceUnavailable, err)
 		return
 	}
 	var m map[string]string
-	if m, err = dbcontroller.AddImage(img, &pnew); err != nil {
-		SendErr(w, r, http.StatusServiceUnavailable, err)
+	if m, err = s.InsertImage(p, img); err != nil {
+		SendErr(w, http.StatusServiceUnavailable, err)
 		return
 	}
 	var imgMap *map[string][]int
 	if imgMap, err = imgData(m); err != nil {
-		SendErr(w, r, http.StatusServiceUnavailable, err)
+		SendErr(w, http.StatusServiceUnavailable, err)
 		return
 	}
-
-	if id, err := dbcontroller.AddPereval(&pnew, imgMap); err != nil {
-		SendErr(w, r, http.StatusServiceUnavailable, err)
+	if id, err := s.Insert(p, imgMap, replaceId); err != nil {
+		SendErr(w, http.StatusServiceUnavailable, err)
 		return
 	} else {
-		SendResponse(w, id)
+		SendHttp(w,
+			InsertResponse{
+				Message: "OK",
+				ID:      id,
+			})
 	}
+
 }
-*/

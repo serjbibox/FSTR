@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"log"
 	"net/http"
 	"time"
 
@@ -17,18 +16,7 @@ func NewPassDAO() *PassDAO {
 	return &PassDAO{}
 }
 
-func (dao *PassDAO) Get(id string) (*models.Pass, error) {
-	var p *models.Pass
-	var err error
-	if p, err = GetPass(id); err != nil {
-		return nil, err
-	}
-	return p, err
-}
-
-//Возвращает JSON структуру карточки перевала из поля raw_data таблицы pereval_added
-func GetPass(id string) (p *models.Pass, err error) {
-
+func (dao *PassDAO) Get(id string) (p *models.Pass, err error) {
 	if err = DbConnect(); err != nil {
 		return nil, fmt.Errorf("%w", err)
 	}
@@ -36,7 +24,6 @@ func GetPass(id string) (p *models.Pass, err error) {
 	var pAdded, status string
 	query := "SELECT status, raw_data FROM pereval_added WHERE id = ($1);"
 	if err = DB.QueryRow(query, id).Scan(&status, &pAdded); err != nil {
-		log.Println("ошибка тут")
 		return nil, fmt.Errorf("%w", err)
 	}
 	if err = json.Unmarshal([]byte(pAdded), &p); err != nil {
@@ -44,6 +31,36 @@ func GetPass(id string) (p *models.Pass, err error) {
 	}
 	p.Status = status
 	return p, nil
+}
+
+func (dao *PassDAO) GetImageData(id string) (*models.AddedImages, error) {
+	var err error
+	if err = DbConnect(); err != nil {
+		return nil, fmt.Errorf("%w", err)
+	}
+	defer DB.Close()
+	var imgAdded string
+	query := "SELECT images FROM pereval_added WHERE id = ($1);"
+	if err = DB.QueryRow(query, id).Scan(&imgAdded); err != nil {
+		return nil, fmt.Errorf("%w", err)
+	}
+	var imgData *models.AddedImages
+	if err = json.Unmarshal([]byte(imgAdded), &imgData); err != nil {
+		return nil, fmt.Errorf("%w", err)
+	}
+	return imgData, nil
+}
+
+func (dao *PassDAO) GetStatus(id string) (status string, err error) {
+	if err = DbConnect(); err != nil {
+		return "", fmt.Errorf("%w", err)
+	}
+	defer DB.Close()
+	query := "SELECT status FROM pereval_added WHERE id = ($1);"
+	if err = DB.QueryRow(query, id).Scan(&status); err != nil {
+		return "", fmt.Errorf("%w", err)
+	}
+	return status, nil
 }
 
 func (dao *PassDAO) Create(r *http.Request) (*models.Pass, error) {
@@ -94,7 +111,7 @@ func (dao *PassDAO) ValidateData(p *models.Pass) error {
 	return nil
 }
 
-func (dao *PassDAO) Insert(p *models.Pass, ai *map[string][]int) (id string, err error) {
+func (dao *PassDAO) Insert(p *models.Pass, ai *map[string][]int, replaceId string) (id string, err error) {
 	err = DbConnect()
 	if err != nil {
 		return "", fmt.Errorf("%w", err)
@@ -111,9 +128,15 @@ func (dao *PassDAO) Insert(p *models.Pass, ai *map[string][]int) (id string, err
 		return "", fmt.Errorf("%w", err)
 	}
 	status := new
-	err = DB.QueryRow("INSERT INTO pereval_added (date_added, raw_data, images, status) VALUES ($1, $2, $3, $4) RETURNING ID;",
-		p.AddTime, pData, iData, status).Scan(&id)
-	//result, err := db.Exec("INSERT INTO pereval_added (date_added, raw_data, status) VALUES ($1, $2, $3);", t, data, Status)
+	query := ""
+	if replaceId == "" {
+		query = "INSERT INTO pereval_added (date_added, raw_data, images, status) VALUES ($1, $2, $3, $4) RETURNING ID;"
+	} else {
+		query = "UPDATE pereval_added SET date_added = $1, raw_data = $2, images = $3, status = $4" +
+			" WHERE id = " + replaceId + " RETURNING ID;"
+	}
+
+	err = DB.QueryRow(query, p.AddTime, pData, iData, status).Scan(&id)
 	if err != nil {
 		return "", fmt.Errorf("%w", err)
 	}

@@ -2,7 +2,6 @@ package apis
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/serjbibox/FSTR/daos"
 	"github.com/serjbibox/FSTR/models"
@@ -20,7 +19,7 @@ import (
 // @Failure   400  {object}  apis.ErrResponse
 // @Failure   503  {object}  apis.ErrResponse
 // @Router    /submitData [post]
-func Create(w http.ResponseWriter, r *http.Request) {
+func Insert(w http.ResponseWriter, r *http.Request) {
 	var err error
 	var p *models.Pass
 	s := services.New(daos.NewPassDAO())
@@ -29,15 +28,11 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		SendErr(w, http.StatusServiceUnavailable, err)
 		return
 	}
-	err = s.ValidateFields(p)
-	if err != nil {
+	if err = Validate(p, s); err != nil {
 		SendErr(w, http.StatusBadRequest, err)
-	}
-	err = s.ValidateData(p)
-	if err != nil {
-		SendErr(w, http.StatusServiceUnavailable, err)
 		return
 	}
+
 	var img [][]byte
 	if img, err = GetImage(p); err != nil {
 		SendErr(w, http.StatusServiceUnavailable, err)
@@ -54,7 +49,7 @@ func Create(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if id, err := s.Insert(p, imgMap); err != nil {
+	if id, err := s.Insert(p, imgMap, ""); err != nil {
 		SendErr(w, http.StatusServiceUnavailable, err)
 		return
 	} else {
@@ -64,17 +59,4 @@ func Create(w http.ResponseWriter, r *http.Request) {
 				ID:      id,
 			})
 	}
-}
-
-func imgData(m map[string]string) (*map[string][]int, error) {
-	imgMap := make(map[string][]int)
-	var err error
-	for key, title := range m {
-		imgId, err := strconv.Atoi(key)
-		if err != nil {
-			return nil, err
-		}
-		imgMap[title] = append(imgMap[title], imgId)
-	}
-	return &imgMap, err
 }

@@ -21,7 +21,7 @@ type Pass struct {
 	} `json:"level"`
 	User   User     `json:"user"`
 	Images []Images `json:"images"`
-	Status string   `json:"status,omitempty"`
+	Status string   `json:"-"`
 }
 
 type PassAdded struct {

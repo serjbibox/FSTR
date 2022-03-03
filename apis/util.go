@@ -5,8 +5,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"strconv"
 
 	"github.com/serjbibox/FSTR/models"
+	"github.com/serjbibox/FSTR/services"
 )
 
 func SendHttp(w http.ResponseWriter, v ResponseInterface) {
@@ -42,4 +44,29 @@ func GetImage(p *models.Pass) ([][]byte, error) {
 
 	}
 	return i, nil
+}
+
+func imgData(m map[string]string) (*map[string][]int, error) {
+	imgMap := make(map[string][]int)
+	var err error
+	for key, title := range m {
+		imgId, err := strconv.Atoi(key)
+		if err != nil {
+			return nil, err
+		}
+		imgMap[title] = append(imgMap[title], imgId)
+	}
+	return &imgMap, err
+}
+
+func Validate(p *models.Pass, s *services.PassService) error {
+	err := s.ValidateFields(p)
+	if err != nil {
+		return err
+	}
+	err = s.ValidateData(p)
+	if err != nil {
+		return err
+	}
+	return nil
 }

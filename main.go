@@ -44,25 +44,17 @@ func main() {
 
 	r.Route("/submitData", func(r chi.Router) {
 		//r.With(paginate).Get("/", ListPass)
-		r.Post("/", apis.Create)
+		r.Post("/", apis.Insert)
 		//r.Get("/search", SearchPass)
 
 		r.Route("/{passID}", func(r chi.Router) {
 			//r.Route("/:id", func(r chi.Router) {
 			r.Use(Ctx)
-
 			r.Get("/", apis.GetPass)
-			//r.Get("/status", apis.GetStatus)
-			//r.Put("/", apis.UpdatePass)
-			//r.Delete("/", DeleteArticle)
+			r.Get("/status", apis.GetStatus)
+			r.Put("/", apis.UpdatePass)
 		})
-
-		// GET /articles/whats-up
-		//r.With(ArticleCtx).Get("/{articleSlug:[a-z-]+}", GetArticle)
 	})
-
-	//r.Post("/submitData", api.Create)
-	//r.Get("/submitData/{id}", api.GetById)
 	log.Panic(http.ListenAndServe(port, r))
 }
 
