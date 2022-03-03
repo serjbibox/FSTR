@@ -50,3 +50,22 @@ func GetStatus(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 }
+
+func Filter(w http.ResponseWriter, r *http.Request) {
+	if filter := r.URL.Query().Get("email"); filter == "" {
+		err := errors.New("ошибка, отсутствует параметр email")
+		SendErr(w, http.StatusServiceUnavailable, err)
+		return
+	} else {
+		s := services.New(daos.NewPassDAO())
+		if status, err := s.GetStatus(filter); err != nil {
+			SendErr(w, http.StatusServiceUnavailable, err)
+			return
+		} else {
+			SendHttp(w, StatusResponse{
+				ID:     filter,
+				Status: status,
+			})
+		}
+	}
+}

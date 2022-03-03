@@ -43,12 +43,9 @@ func main() {
 	})
 
 	r.Route("/submitData", func(r chi.Router) {
-		//r.With(paginate).Get("/", ListPass)
+		r.Get("/", apis.Filter)
 		r.Post("/", apis.Insert)
-		//r.Get("/search", SearchPass)
-
 		r.Route("/{passID}", func(r chi.Router) {
-			//r.Route("/:id", func(r chi.Router) {
 			r.Use(Ctx)
 			r.Get("/", apis.GetPass)
 			r.Get("/status", apis.GetStatus)
@@ -61,7 +58,7 @@ func main() {
 /*
 GET /submitData/:id/status — получить статус модерации отправленных данных. OK
 PUT /submitData/:id — отредактировать существующую запись (замена), если она в статусе new.
-Редактировать можно все поля, кроме ФИО, почта, телефон.
+Редактировать можно все поля, кроме ФИО, почта, телефон. OK
 GET /submitData/ — список всех данных для отображения, которые этот пользователь отправил
 на сервер через приложение с возможностью фильтрации по данным пользователя (ФИО, телефон, почта), если передан объект.
 GET /submitData/:id — получить одну запись (перевал) по её id. OK
