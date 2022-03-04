@@ -8,6 +8,14 @@ import (
 	"github.com/serjbibox/FSTR/services"
 )
 
+const (
+	singleMode = iota
+	mailMode
+	phoneMode
+	fioMode
+	statusMode
+)
+
 // @Summary   Получает запись из pereval_added по ID записи
 // @Tags /submitData/:id
 // @Produce   json
@@ -22,11 +30,14 @@ func GetPass(w http.ResponseWriter, r *http.Request) {
 		return
 	} else {
 		s := services.New(daos.NewPassDAO())
-		if p, err := s.Get(id); err != nil {
-			SendErr(w, http.StatusServiceUnavailable, err)
+		f := services.NewFlow()
+		f.ID = id
+		f.GetWith = singleMode
+		if f := s.Get(f); f.Err != nil {
+			SendErr(w, http.StatusServiceUnavailable, f.Err)
 			return
 		} else {
-			SendHttp(w, PassResponse{Pass: p})
+			SendHttp(w, PassResponse{Pass: f.Pass})
 		}
 	}
 
@@ -39,33 +50,58 @@ func GetStatus(w http.ResponseWriter, r *http.Request) {
 		return
 	} else {
 		s := services.New(daos.NewPassDAO())
-		if status, err := s.GetStatus(id); err != nil {
-			SendErr(w, http.StatusServiceUnavailable, err)
+		f := services.NewFlow()
+		f.ID = id
+		f.GetWith = statusMode
+		if f = s.Get(f); f.Err != nil {
+			SendErr(w, http.StatusServiceUnavailable, f.Err)
 			return
-		} else {
-			SendHttp(w, StatusResponse{
-				ID:     id,
-				Status: status,
-			})
 		}
+		SendHttp(w, StatusResponse{
+			ID:     id,
+			Status: f.Pass.Status,
+		})
 	}
 }
 
-func Filter(w http.ResponseWriter, r *http.Request) {
-	if filter := r.URL.Query().Get("email"); filter == "" {
-		err := errors.New("ошибка, отсутствует параметр email")
-		SendErr(w, http.StatusServiceUnavailable, err)
-		return
-	} else {
-		s := services.New(daos.NewPassDAO())
-		if status, err := s.GetStatus(filter); err != nil {
+func ListPass(w http.ResponseWriter, r *http.Request) {
+	s := services.New(daos.NewPassDAO())
+	f := services.NewFlow()
+	switch {
+	case r.URL.Query().Get("email") != "":
+		f.GetBy = r.URL.Query().Get("email")
+		f.GetWith = mailMode
+		//log.Println("mailMode")
+	case r.URL.Query().Get("phone") != "":
+		f.GetBy = r.URL.Query().Get("phone")
+		f.GetWith = phoneMode
+		//log.Println("phoneMode")
+	case r.URL.Query().Get("fam") != "":
+		f.GetByFIO[0] = r.URL.Query().Get("fam")
+		if r.URL.Query().Get("name") == "" {
+			err := errors.New("ошибка, отсутствует параметр \"name\"")
 			SendErr(w, http.StatusServiceUnavailable, err)
 			return
-		} else {
-			SendHttp(w, StatusResponse{
-				ID:     filter,
-				Status: status,
-			})
 		}
+		f.GetByFIO[1] = r.URL.Query().Get("name")
+		if r.URL.Query().Get("otc") == "" {
+			err := errors.New("ошибка, отсутствует параметр \"otc\"")
+			SendErr(w, http.StatusServiceUnavailable, err)
+			return
+		}
+		f.GetByFIO[2] = r.URL.Query().Get("otc")
+		f.GetWith = fioMode
+		//log.Println("fioMode")
+	default:
+		err := errors.New("ошибка, отсутствует параметр")
+		SendErr(w, http.StatusServiceUnavailable, err)
+		return
 	}
+	if f := s.Get(f); f.Err != nil {
+		SendErr(w, http.StatusServiceUnavailable, f.Err)
+		return
+	} else {
+		SendHttp(w, PassArrayResponse{Parray: &f.Parray})
+	}
+
 }

@@ -43,7 +43,8 @@ func main() {
 	})
 
 	r.Route("/submitData", func(r chi.Router) {
-		r.Get("/", apis.Filter)
+
+		r.Get("/", apis.ListPass)
 		r.Post("/", apis.Insert)
 		r.Route("/{passID}", func(r chi.Router) {
 			r.Use(Ctx)
@@ -65,6 +66,11 @@ GET /submitData/:id — получить одну запись (перевал) 
 При создании записи в БД, бэк возвращает фронту id и фронт этот id сохраняет у себя локально.
 За счёт этого может редактировать записи, которые ещё не отрезолвлены модератором.
 */
+func paginate(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		next.ServeHTTP(w, r)
+	})
+}
 
 func Ctx(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {

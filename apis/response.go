@@ -25,6 +25,18 @@ func (p PassResponse) Send(w http.ResponseWriter) {
 
 // @Description Структура HTTP ответа:
 // @Description если отправка успешна, дополнительно возвращается id вставленной записи.
+type PassArrayResponse struct {
+	Parray *[]models.Pass
+}
+
+func (p PassArrayResponse) Send(w http.ResponseWriter) {
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(&p.Parray)
+}
+
+// @Description Структура HTTP ответа:
+// @Description если отправка успешна, дополнительно возвращается id вставленной записи.
 type InsertResponse struct {
 	ID      string `json:"id" example:"123"`
 	Message string `json:"message" example:"OK"`

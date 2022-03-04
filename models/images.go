@@ -8,13 +8,3 @@ type Images struct {
 type AddedImages struct {
 	ImgMap map[string][]int
 }
-
-/*
-{
-	"sedlo": [2,3],
-	"Nord": [1],
-	"West": null,
-	"South": [4,5],
-	"East": [6]
-}
-*/

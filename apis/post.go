@@ -4,7 +4,6 @@ import (
 	"net/http"
 
 	"github.com/serjbibox/FSTR/daos"
-	"github.com/serjbibox/FSTR/models"
 	"github.com/serjbibox/FSTR/services"
 )
 
@@ -20,43 +19,24 @@ import (
 // @Failure   503  {object}  apis.ErrResponse
 // @Router    /submitData [post]
 func Insert(w http.ResponseWriter, r *http.Request) {
-	var err error
-	var p *models.Pass
 	s := services.New(daos.NewPassDAO())
-	p, err = s.Create(r)
-	if err != nil {
-		SendErr(w, http.StatusServiceUnavailable, err)
+	f := services.NewFlow()
+	f.ErrStatus = http.StatusServiceUnavailable
+	f.Pass = s.Create(f, r).
+		ValidateFields().
+		ValidateData().
+		GetImage().
+		Pass
+	s.InsertTo(f, "pereval_images").ImgData()
+	s.InsertTo(f, "pereval_added")
+	if f.Err != nil {
+		SendErr(w, f.ErrStatus, f.Err)
 		return
 	}
-	if err = Validate(p, s); err != nil {
-		SendErr(w, http.StatusBadRequest, err)
-		return
-	}
+	SendHttp(w,
+		InsertResponse{
+			Message: "OK",
+			ID:      f.ID,
+		})
 
-	var img [][]byte
-	if img, err = GetImage(p); err != nil {
-		SendErr(w, http.StatusServiceUnavailable, err)
-		return
-	}
-	var m map[string]string
-	if m, err = s.InsertImage(p, img); err != nil {
-		SendErr(w, http.StatusServiceUnavailable, err)
-		return
-	}
-	var imgMap *map[string][]int
-	if imgMap, err = imgData(m); err != nil {
-		SendErr(w, http.StatusServiceUnavailable, err)
-		return
-	}
-
-	if id, err := s.Insert(p, imgMap, ""); err != nil {
-		SendErr(w, http.StatusServiceUnavailable, err)
-		return
-	} else {
-		SendHttp(w,
-			InsertResponse{
-				Message: "OK",
-				ID:      id,
-			})
-	}
 }
