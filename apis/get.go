@@ -71,11 +71,9 @@ func ListPass(w http.ResponseWriter, r *http.Request) {
 	case r.URL.Query().Get("email") != "":
 		f.GetBy = r.URL.Query().Get("email")
 		f.GetWith = mailMode
-		//log.Println("mailMode")
 	case r.URL.Query().Get("phone") != "":
 		f.GetBy = r.URL.Query().Get("phone")
 		f.GetWith = phoneMode
-		//log.Println("phoneMode")
 	case r.URL.Query().Get("fam") != "":
 		f.GetByFIO[0] = r.URL.Query().Get("fam")
 		if r.URL.Query().Get("name") == "" {
@@ -91,7 +89,6 @@ func ListPass(w http.ResponseWriter, r *http.Request) {
 		}
 		f.GetByFIO[2] = r.URL.Query().Get("otc")
 		f.GetWith = fioMode
-		//log.Println("fioMode")
 	default:
 		err := errors.New("ошибка, отсутствует параметр")
 		SendErr(w, http.StatusServiceUnavailable, err)
