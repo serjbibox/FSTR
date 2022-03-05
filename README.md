@@ -1,9 +1,9 @@
 <h1 align="center">REST API для проекта ФСТР</h1>
 <h2 align="center"><a href="http://propane-facet-342315.ue.r.appspot.com/index.html#/" >Документация Swagger</a></h2>
 
-[POST /submitData](#POST-/submitData)
-[GET /submitData](#Get-/submitData)
 
+0. [Разделительная черта](#Разделительная-черта)
+1. [Заголовки](#Заголовки)
 
 # POST 
 ### POST /submitData
@@ -57,7 +57,7 @@ http://propane-facet-342315.ue.r.appspot.com/submitData
   }
 }
 ```
-
+#Разделительная-черта
 ### Response
 #### Response body
 ```
@@ -107,6 +107,8 @@ OR
 "fam" AND "name" AND "otc" ()
 
   ```
+  
+  #Заголовки
 #### Request URL
 ```
 http://propane-facet-342315.ue.r.appspot.com/submitData
