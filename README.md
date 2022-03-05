@@ -1,6 +1,8 @@
 <h1 align="center">REST API для проекта ФСТР</h1>
 <h2 align="center"><a href="http://propane-facet-342315.ue.r.appspot.com/index.html#/" >Документация Swagger</a></h2>
 
+Протестировать сервис можно по ссылке: http://propane-facet-342315.ue.r.appspot.com
+
 - [Создание записи](#Создание-записи)
 - [Запрос записей](#Запрос-записей)
 - [Запрос записи по ID](#Запрос-записи-по-ID)
