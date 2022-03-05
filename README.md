@@ -1,12 +1,12 @@
 <h1 align="center">REST API для проекта ФСТР</h1>
 <h2 align="center"><a href="http://propane-facet-342315.ue.r.appspot.com/index.html#/" >Документация Swagger</a></h2>
 
-[/submitData](#/submitData)
-
+[POST /submitData](#POST-/submitData)
+[GET /submitData](#Get-/submitData)
 
 
 # POST 
-### /submitData
+### POST /submitData
 ### Request
 ```
 curl -X 'POST' \
