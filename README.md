@@ -1,8 +1,13 @@
 <h1 align="center">REST API для проекта ФСТР</h1>
 <h2 align="center"><a href="http://propane-facet-342315.ue.r.appspot.com/index.html#/" >Документация Swagger</a></h2>
 
-# Request
-### POST /submitData
+[/submitData](#/submitData)
+
+
+
+# POST 
+### /submitData
+### Request
 ```
 curl -X 'POST' \
   'http://propane-facet-342315.ue.r.appspot.com/submitData' \
@@ -12,6 +17,7 @@ curl -X 'POST' \
   ```
 #### Request URL
 ```
+
 http://propane-facet-342315.ue.r.appspot.com/submitData
 ```
  #### Request body
@@ -52,7 +58,7 @@ http://propane-facet-342315.ue.r.appspot.com/submitData
 }
 ```
 
-# Response
+### Response
 #### Response body
 ```
 Status 200 OK
@@ -78,8 +84,8 @@ Body:
 {"message" : "причина ошибки"}
 ```
 
-# Request
-### GET /submitData
+# GET /submitData
+### Request
 ```
 
 curl -X 'GET' \
