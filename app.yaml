@@ -1,1 +1,7 @@
 runtime: go116
+
+env_variables:
+    FSTR_DB_LOGIN: "fstr"
+    FSTR_DB_PASS: "******"
+    FSTR_DB_HOST: "35.239.250.100"
+    FSTR_DB_PORT: "5432"
