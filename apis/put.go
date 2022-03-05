@@ -3,11 +3,22 @@ package apis
 import (
 	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/serjbibox/FSTR/daos"
 	"github.com/serjbibox/FSTR/services"
 )
 
+// @Summary  Редактирует существующую запись в pereval_added , если она в статусе "new"
+// @Tags     /submitData/{id}
+// @Accept   json
+// @Produce  json
+// @Param    id     path      int          true  "pereval_added PRIMARY KEY ID"
+// @Param    input  body      models.Pass  true  "карточка объекта"
+// @Success  200    {object}  apis.InsertResponse
+// @Failure  400    {object}  apis.ErrResponse
+// @Failure  503    {object}  apis.ErrResponse
+// @Router   /submitData/{id} [put]
 func UpdatePass(w http.ResponseWriter, r *http.Request) {
 	var replaceId string
 	if id, ok := r.Context().Value("id").(string); !ok {
@@ -15,8 +26,13 @@ func UpdatePass(w http.ResponseWriter, r *http.Request) {
 		SendErr(w, http.StatusServiceUnavailable, err)
 		return
 	} else {
+		if _, err := strconv.Atoi(id); err != nil {
+			SendErr(w, http.StatusServiceUnavailable, err)
+			return
+		}
 		replaceId = id
 	}
+
 	s := services.New(daos.NewPassDAO())
 	f := services.NewFlow()
 	f.ErrStatus = http.StatusServiceUnavailable

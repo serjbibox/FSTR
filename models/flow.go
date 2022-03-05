@@ -1,27 +1,35 @@
 package models
 
 import (
+	"encoding/base64"
 	"errors"
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/mail"
 	"strconv"
 	"time"
 )
 
 type Flow struct {
-	Pass      *Pass
-	Parray    []Pass
-	ID        string
-	RID       string
-	Images    *[][]byte
-	ImgMapPA  *map[string]string
-	ImgMapIA  *map[string][]int
-	Err       error
-	ErrStatus int
-	GetWith   byte
-	GetBy     string
-	GetByFIO  [3]string
+	Pass         *Pass
+	Parray       []PassLoaded
+	PassLoaded   *PassLoaded
+	ID           string
+	RID          string
+	ImagesMap    *[]ImagesMap
+	ImagesLoaded []*ImageLoaded
+	ImageLoaded  *ImageLoaded
+	Images       *[][]byte
+	ImgMapPA     *map[string]string
+	ImgMapIA     *map[string][]int
+	Err          error
+	Warning      error
+	ImgExpects   []int
+	ErrStatus    int
+	GetWith      byte
+	GetBy        string
+	GetByFIO     [3]string
 }
 
 func (f *Flow) ImgData() *Flow {
@@ -47,7 +55,18 @@ func (f *Flow) GetImage() *Flow {
 		return f
 	}
 	var imgArray [][]byte
-	for _, elem := range f.Pass.Images {
+	for idx, elem := range f.Pass.Images {
+		if f.Warning.Error() != "" {
+			flag := false
+			for _, elem := range f.ImgExpects {
+				if elem == idx {
+					flag = true
+				}
+			}
+			if flag {
+				continue
+			}
+		}
 		response, err := http.Get(elem.URL)
 		if err != nil {
 			f.Err = fmt.Errorf("%w", err)
@@ -60,12 +79,17 @@ func (f *Flow) GetImage() *Flow {
 			return f
 
 		}
-		if img, err := ioutil.ReadAll(response.Body); err != nil {
+		var bytes []byte
+		bytes, f.Err = ioutil.ReadAll(response.Body)
+		if f.Err != nil {
 			f.Err = fmt.Errorf("%w", err)
 			return f
-		} else {
-			imgArray = append(imgArray, img)
 		}
+		var base64Encoding string
+		mimeType := http.DetectContentType(bytes)
+		base64Encoding += "data:" + mimeType + ";base64,"
+		base64Encoding += base64.StdEncoding.EncodeToString(bytes)
+		imgArray = append(imgArray, []byte(base64Encoding))
 	}
 	f.Images = &imgArray
 	return f
@@ -76,11 +100,11 @@ func (f *Flow) ValidateFields() *Flow {
 	switch {
 	case f.Err != nil:
 		return f
+	case !isValid(f.Pass.User.Email):
+		f.Err = errors.New("неверный email адрес")
+		return f
 	case f.Pass.ID == "":
 		f.Err = errors.New("отсутствует ID перевала")
-		return f
-	case f.Pass.User.ID == "":
-		f.Err = errors.New("отсутствует ID пользователя")
 		return f
 	case f.Pass.Coords.Height == "":
 		f.Err = errors.New("отсутствует координата: coords.Height")
@@ -98,18 +122,30 @@ func (f *Flow) ValidateFields() *Flow {
 		f.Err = errors.New("отсутствует название объекта")
 		return f
 	case len(f.Pass.Images) == 0:
-		f.Err = errors.New("отсутствуют изображения")
-		return f
+		//f.Err = errors.New("отсутствуют изображения")
+		f.Warning = errors.New("warning: отсутствуют изображения")
+		//return f
 	case len(f.Pass.Images) != 0:
 		for idx, elem := range f.Pass.Images {
 			if elem.URL == "" {
-				s := fmt.Sprintf("отсутствует URL изображения: №%d, описание: %s", idx+1, elem.Title)
-				f.Err = errors.New(s)
-				return f
+				s := fmt.Sprintf("warning: отсутствует URL изображения: №%d, описание: %s", idx+1, elem.Title)
+				//f.Err = errors.New(s)
+				f.Warning = errors.New(s)
+				f.ImgExpects = append(f.ImgExpects, idx)
+				//return f
 			}
 		}
+		//case f.Pass.User.ID == "":
+		//	f.Err = errors.New("отсутствует ID пользователя")
+		//	return f
 	}
 	return f
+
+}
+
+func isValid(email string) bool {
+	_, err := mail.ParseAddress(email)
+	return err == nil
 }
 
 func (f *Flow) ValidateData() *Flow {

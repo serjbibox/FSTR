@@ -1,20 +1,12 @@
 definitions:
   apis.ErrResponse:
-    description: Структура HTTP ответа об ошибке
+    description: Структура HTTP ответа ERROR
     properties:
-      code:
-        description: application-specific error code
-        type: integer
       error:
-        description: application-level error message, for debugging
-        type: string
-      status:
-        description: user-level status message
         type: string
     type: object
-  apis.Response:
-    description: 'Структура HTTP ответа: если отправка успешна, дополнительно возвращается
-      id вставленной записи.'
+  apis.InsertResponse:
+    description: Структура HTTP ответа метода POST /submitData
     properties:
       id:
         example: "123"
@@ -23,16 +15,70 @@ definitions:
         example: OK
         type: string
     type: object
+  apis.PassArrayResponse:
+    description: Структура HTTP ответа метода PUT /submitData/{id}
+    properties:
+      parray:
+        items:
+          $ref: '#/definitions/models.PassLoaded'
+        type: array
+    type: object
+  apis.PassResponse:
+    description: Структура HTTP ответа метода GET /submitData/{id}
+    properties:
+      passLoaded:
+        $ref: '#/definitions/models.PassLoaded'
+    type: object
+  apis.QueryParam:
+    description: 'Структура тела запроса метода GET /submitData Необходимые поля:
+      Phone | Email | Fam & Name & OTC'
+    properties:
+      email:
+        example: sample@sample.com
+        type: string
+      fam:
+        example: Иванов
+        type: string
+      name:
+        example: Иван
+        type: string
+      otc:
+        example: Иванович
+        type: string
+      phone:
+        example: "+71234567890"
+        type: string
+    type: object
+  apis.StatusResponse:
+    description: Структура HTTP ответа метода GET /submitData/{id}/status
+    properties:
+      id:
+        example: "123"
+        type: string
+      status:
+        example: new
+        type: string
+    type: object
+  models.ImageLoaded:
+    properties:
+      blob:
+        description: Строку удобнее тестировать
+        type: string
+      title:
+        example: Спуск. Фото №99
+        type: string
+    type: object
   models.Images:
     properties:
       title:
         example: Спуск. Фото №99
         type: string
       url:
-        example: https://avatars.mds.yandex.net/i?id=a467876d3e1b1f0a84050103a206cf81-5858922-images-thumbs&n=13
+        example: https://img.icons8.com/ios/2x/roller-skating.png
         type: string
     type: object
-  models.Pereval:
+  models.Pass:
+    description: Структура тела запроса POST /submitData
     properties:
       add_time:
         example: "2021-09-22 13:18:13"
@@ -58,6 +104,64 @@ definitions:
       images:
         items:
           $ref: '#/definitions/models.Images'
+        type: array
+      level:
+        properties:
+          autumn:
+            example: 1A
+            type: string
+          spring:
+            example: ' '
+            type: string
+          summer:
+            example: 1A
+            type: string
+          winter:
+            example: ' '
+            type: string
+        type: object
+      other_titles:
+        example: "1"
+        type: string
+      pereval_id:
+        example: "125"
+        type: string
+      title:
+        example: Туя-Ашуу
+        type: string
+      type:
+        example: pass
+        type: string
+      user:
+        $ref: '#/definitions/models.User'
+    type: object
+  models.PassLoaded:
+    description: Структура поля raw_data таблицы pereval_added
+    properties:
+      add_time:
+        example: "2021-09-22 13:18:13"
+        type: string
+      beautyTitle:
+        example: 'пер. '
+        type: string
+      connect:
+        example: ' '
+        type: string
+      coords:
+        properties:
+          height:
+            example: "1200"
+            type: string
+          latitude:
+            example: "45.3842"
+            type: string
+          longitude:
+            example: "7.1525"
+            type: string
+        type: object
+      images:
+        items:
+          $ref: '#/definitions/models.ImageLoaded'
         type: array
       level:
         properties:
@@ -128,20 +232,14 @@ paths:
         name: input
         required: true
         schema:
-          $ref: '#/definitions/models.Pereval'
-      - description: ID созданной записи
-        in: body
-        name: output
-        required: true
-        schema:
-          $ref: '#/definitions/apis.Response'
+          $ref: '#/definitions/models.Pass'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apis.Response'
+            $ref: '#/definitions/apis.InsertResponse'
         "400":
           description: Bad Request
           schema:
@@ -153,15 +251,54 @@ paths:
       summary: Создаёт новую запись в pereval_added
       tags:
       - /submitData
-  /submitData/:id:
+  /submitData/:
     get:
+      consumes:
+      - application/json
+      description: К сожалению, Swagger считает, что у GET запроса не должно быть
+        тела. Можно проверить этот запрос, например, в Postman.
+      parameters:
+      - description: Фильтровать по email
+        format: email
+        in: body
+        name: email
+        schema:
+          $ref: '#/definitions/apis.QueryParam'
       produces:
       - application/json
       responses:
         "200":
           description: OK
           schema:
-            $ref: '#/definitions/apis.Response'
+            $ref: '#/definitions/apis.PassArrayResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apis.ErrResponse'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/apis.ErrResponse'
+      summary: список всех данных для отображения, которые этот пользователь отправил
+        на сервер через приложение с возможностью фильтрации по данным пользователя
+        (ФИО, телефон, почта), если передан объект.
+      tags:
+      - /submitData/
+  /submitData/{id}:
+    get:
+      parameters:
+      - description: pereval_added PRIMARY KEY ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apis.PassResponse'
         "400":
           description: Bad Request
           schema:
@@ -172,5 +309,65 @@ paths:
             $ref: '#/definitions/apis.ErrResponse'
       summary: Получает запись из pereval_added по ID записи
       tags:
-      - /submitData/:id
+      - /submitData/{id}
+    put:
+      consumes:
+      - application/json
+      parameters:
+      - description: pereval_added PRIMARY KEY ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      - description: карточка объекта
+        in: body
+        name: input
+        required: true
+        schema:
+          $ref: '#/definitions/models.Pass'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apis.InsertResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apis.ErrResponse'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/apis.ErrResponse'
+      summary: Редактирует существующую запись в pereval_added , если она в статусе
+        "new"
+      tags:
+      - /submitData/{id}
+  /submitData/{id}/status:
+    get:
+      parameters:
+      - description: pereval_added PRIMARY KEY ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/apis.StatusResponse'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/apis.ErrResponse'
+        "503":
+          description: Service Unavailable
+          schema:
+            $ref: '#/definitions/apis.ErrResponse'
+      summary: Получает записи из pereval_added по ID записи
+      tags:
+      - /submitData/{id}/status
 swagger: "2.0"

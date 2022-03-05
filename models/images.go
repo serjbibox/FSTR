@@ -1,10 +1,21 @@
 package models
 
 type Images struct {
-	URL   string `json:"url" example:"https://avatars.mds.yandex.net/i?id=a467876d3e1b1f0a84050103a206cf81-5858922-images-thumbs&n=13"`
+	URL   string `json:"url" example:"https://img.icons8.com/ios/2x/roller-skating.png"`
 	Title string `json:"title" example:"Спуск. Фото №99"`
 }
 
-type AddedImages struct {
-	ImgMap map[string][]int
+type ImageLoaded struct {
+	Title string `json:"title" example:"Спуск. Фото №99"`
+	Blob  string `json:"blob"` //Строку удобнее тестировать
+	//Blob  []byte `json:"blob"`
+}
+
+type ImagesMap struct {
+	Title string `json:"title" example:"Спуск. Фото №99"`
+	ID    []byte `json:"id"`
+}
+
+func NewImageLoaded() *ImageLoaded {
+	return &ImageLoaded{}
 }

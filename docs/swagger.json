@@ -29,16 +29,7 @@
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/models.Pereval"
-                        }
-                    },
-                    {
-                        "description": "ID созданной записи",
-                        "name": "output",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/apis.Response"
+                            "$ref": "#/definitions/models.Pass"
                         }
                     }
                 ],
@@ -46,7 +37,7 @@
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apis.Response"
+                            "$ref": "#/definitions/apis.InsertResponse"
                         }
                     },
                     "400": {
@@ -64,20 +55,165 @@
                 }
             }
         },
-        "/submitData/:id": {
+        "/submitData/": {
+            "get": {
+                "description": "К сожалению, Swagger считает, что у GET запроса не должно быть тела. Можно проверить этот запрос, например, в Postman.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "/submitData/"
+                ],
+                "summary": "список всех данных для отображения, которые этот пользователь отправил на сервер через приложение с возможностью фильтрации по данным пользователя (ФИО, телефон, почта), если передан объект.",
+                "parameters": [
+                    {
+                        "format": "email",
+                        "description": "Фильтровать по email",
+                        "name": "email",
+                        "in": "body",
+                        "schema": {
+                            "$ref": "#/definitions/apis.QueryParam"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apis.PassArrayResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apis.ErrResponse"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/apis.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/submitData/{id}": {
             "get": {
                 "produces": [
                     "application/json"
                 ],
                 "tags": [
-                    "/submitData/:id"
+                    "/submitData/{id}"
                 ],
                 "summary": "Получает запись из pereval_added по ID записи",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "pereval_added PRIMARY KEY ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
                 "responses": {
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/apis.Response"
+                            "$ref": "#/definitions/apis.PassResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apis.ErrResponse"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/apis.ErrResponse"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "/submitData/{id}"
+                ],
+                "summary": "Редактирует существующую запись в pereval_added , если она в статусе \"new\"",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "pereval_added PRIMARY KEY ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "карточка объекта",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/models.Pass"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apis.InsertResponse"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/apis.ErrResponse"
+                        }
+                    },
+                    "503": {
+                        "description": "Service Unavailable",
+                        "schema": {
+                            "$ref": "#/definitions/apis.ErrResponse"
+                        }
+                    }
+                }
+            }
+        },
+        "/submitData/{id}/status": {
+            "get": {
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "/submitData/{id}/status"
+                ],
+                "summary": "Получает записи из pereval_added по ID записи",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "pereval_added PRIMARY KEY ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/apis.StatusResponse"
                         }
                     },
                     "400": {
@@ -98,25 +234,16 @@
     },
     "definitions": {
         "apis.ErrResponse": {
-            "description": "Структура HTTP ответа об ошибке",
+            "description": "Структура HTTP ответа ERROR",
             "type": "object",
             "properties": {
-                "code": {
-                    "description": "application-specific error code",
-                    "type": "integer"
-                },
                 "error": {
-                    "description": "application-level error message, for debugging",
-                    "type": "string"
-                },
-                "status": {
-                    "description": "user-level status message",
                     "type": "string"
                 }
             }
         },
-        "apis.Response": {
-            "description": "Структура HTTP ответа: если отправка успешна, дополнительно возвращается id вставленной записи.",
+        "apis.InsertResponse": {
+            "description": "Структура HTTP ответа метода POST /submitData",
             "type": "object",
             "properties": {
                 "id": {
@@ -129,6 +256,80 @@
                 }
             }
         },
+        "apis.PassArrayResponse": {
+            "description": "Структура HTTP ответа метода PUT /submitData/{id}",
+            "type": "object",
+            "properties": {
+                "parray": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.PassLoaded"
+                    }
+                }
+            }
+        },
+        "apis.PassResponse": {
+            "description": "Структура HTTP ответа метода GET /submitData/{id}",
+            "type": "object",
+            "properties": {
+                "passLoaded": {
+                    "$ref": "#/definitions/models.PassLoaded"
+                }
+            }
+        },
+        "apis.QueryParam": {
+            "description": "Структура тела запроса метода GET /submitData Необходимые поля: Phone | Email | Fam \u0026 Name \u0026 OTC",
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "sample@sample.com"
+                },
+                "fam": {
+                    "type": "string",
+                    "example": "Иванов"
+                },
+                "name": {
+                    "type": "string",
+                    "example": "Иван"
+                },
+                "otc": {
+                    "type": "string",
+                    "example": "Иванович"
+                },
+                "phone": {
+                    "type": "string",
+                    "example": "+71234567890"
+                }
+            }
+        },
+        "apis.StatusResponse": {
+            "description": "Структура HTTP ответа метода GET /submitData/{id}/status",
+            "type": "object",
+            "properties": {
+                "id": {
+                    "type": "string",
+                    "example": "123"
+                },
+                "status": {
+                    "type": "string",
+                    "example": "new"
+                }
+            }
+        },
+        "models.ImageLoaded": {
+            "type": "object",
+            "properties": {
+                "blob": {
+                    "description": "Строку удобнее тестировать",
+                    "type": "string"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Спуск. Фото №99"
+                }
+            }
+        },
         "models.Images": {
             "type": "object",
             "properties": {
@@ -138,11 +339,12 @@
                 },
                 "url": {
                     "type": "string",
-                    "example": "https://avatars.mds.yandex.net/i?id=a467876d3e1b1f0a84050103a206cf81-5858922-images-thumbs\u0026n=13"
+                    "example": "https://img.icons8.com/ios/2x/roller-skating.png"
                 }
             }
         },
-        "models.Pereval": {
+        "models.Pass": {
+            "description": "Структура тела запроса POST /submitData",
             "type": "object",
             "properties": {
                 "add_time": {
@@ -178,6 +380,87 @@
                     "type": "array",
                     "items": {
                         "$ref": "#/definitions/models.Images"
+                    }
+                },
+                "level": {
+                    "type": "object",
+                    "properties": {
+                        "autumn": {
+                            "type": "string",
+                            "example": "1A"
+                        },
+                        "spring": {
+                            "type": "string",
+                            "example": " "
+                        },
+                        "summer": {
+                            "type": "string",
+                            "example": "1A"
+                        },
+                        "winter": {
+                            "type": "string",
+                            "example": " "
+                        }
+                    }
+                },
+                "other_titles": {
+                    "type": "string",
+                    "example": "1"
+                },
+                "pereval_id": {
+                    "type": "string",
+                    "example": "125"
+                },
+                "title": {
+                    "type": "string",
+                    "example": "Туя-Ашуу"
+                },
+                "type": {
+                    "type": "string",
+                    "example": "pass"
+                },
+                "user": {
+                    "$ref": "#/definitions/models.User"
+                }
+            }
+        },
+        "models.PassLoaded": {
+            "description": "Структура поля raw_data таблицы pereval_added",
+            "type": "object",
+            "properties": {
+                "add_time": {
+                    "type": "string",
+                    "example": "2021-09-22 13:18:13"
+                },
+                "beautyTitle": {
+                    "type": "string",
+                    "example": "пер. "
+                },
+                "connect": {
+                    "type": "string",
+                    "example": " "
+                },
+                "coords": {
+                    "type": "object",
+                    "properties": {
+                        "height": {
+                            "type": "string",
+                            "example": "1200"
+                        },
+                        "latitude": {
+                            "type": "string",
+                            "example": "45.3842"
+                        },
+                        "longitude": {
+                            "type": "string",
+                            "example": "7.1525"
+                        }
+                    }
+                },
+                "images": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.ImageLoaded"
                     }
                 },
                 "level": {

@@ -1,6 +1,7 @@
 package services
 
 import (
+	"errors"
 	"net/http"
 
 	"github.com/serjbibox/FSTR/models"
@@ -25,6 +26,7 @@ func NewFlow() *models.Flow {
 		Pass: &models.Pass{
 			Type: "pass",
 		},
+		Warning: errors.New(""),
 	}
 }
 

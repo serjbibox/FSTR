@@ -34,10 +34,10 @@ func ConnStringConfig() (string, error) {
 	}
 	// Установка системных переменных для тестирования
 	// После теста удалить!
-	//os.Setenv(FSTR_DB_LOGIN, "fstr")
-	//os.Setenv(FSTR_DB_PASS, "123456")
-	//os.Setenv(FSTR_DB_HOST, "35.239.250.100")
-	//os.Setenv(FSTR_DB_PORT, "5432")
+	os.Setenv(FSTR_DB_LOGIN, "fstr")
+	os.Setenv(FSTR_DB_PASS, "123456")
+	os.Setenv(FSTR_DB_HOST, "35.239.250.100")
+	os.Setenv(FSTR_DB_PORT, "5432")
 	//////////////////////////////////////////////////
 	for key := range m {
 		if d := readEnvironment(key); d == "" {
