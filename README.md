@@ -6,6 +6,7 @@
 - [Запрос записи по ID](#Запрос-записи-по-ID)
 - [Запрос статуса записи по ID](#Запрос-статуса-записи-по-ID)
 - [Редактирование записи](#Редактирование-записи)
+- [Bad request](#Bad-request)
 
 # Создание записи
 ## POST /submitData
@@ -77,14 +78,6 @@ Status 200 OK
  date: Sat,05 Mar 2022 10:46:32 GMT 
  server: Google Frontend 
  x-cloud-trace-context: 94ebc906a4f7734366bfbe987cb7fbe4;o=1 
-```
-#### Bad request
-```
-Status:
-400 нехватка полей
-503 ошибка при выполнении операции
-Body:
-{"message" : "причина ошибки"}
 ```
 
 # Запрос записей
@@ -317,4 +310,13 @@ http://propane-facet-342315.ue.r.appspot.com/submitData/174
  date: Sat,05 Mar 2022 11:38:49 GMT 
  server: Google Frontend 
  x-cloud-trace-context: c2fbdc552ac9809af8677af9cc075dac;o=1 
+```
+# Bad request
+## Bad request
+```
+Status:
+400 нехватка полей
+503 ошибка при выполнении операции
+Body:
+{"message" : "причина ошибки"}
 ```
