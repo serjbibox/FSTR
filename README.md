@@ -3,7 +3,9 @@
 
 - [Создание записи](#Создание-записи)
 - [Запрос записей](#Запрос-записей)
-
+- [Запрос записи по ID](#Запрос-записи-по-ID)
+- [Запрос статуса записи по ID](#Запрос-статуса-записи-по-ID)
+- [Редактирование записи](#Редактирование-записи)
 
 # Создание записи
 ## POST /submitData
@@ -154,6 +156,8 @@ http://propane-facet-342315.ue.r.appspot.com/submitData
     }]
 
 ```
+
+# Запрос записи по ID
 ## GET /submitData/{id}
 Возвращает запись по ID БД.
 #### Request
@@ -214,6 +218,7 @@ http://propane-facet-342315.ue.r.appspot.com/submitData/174
  x-cloud-trace-context: a736ad2d9837ee3001a1517cb36ea32a
 ```
 
+# Запрос статуса записи по ID
 ## GET /submitData/{id}/status
 Возвращает статус модерирования записи.
 #### Request
@@ -243,6 +248,7 @@ http://propane-facet-342315.ue.r.appspot.com/submitData/174/status
  x-cloud-trace-context: fd03f60da5e25048558afcedf6ee7197;o=1 
 ```
 
+# Редактирование записи
 ## PUT /submitData/{id}
 Обновляет запись по ID. Для обновления недоступны поля: "name", "fam", "otc", "email", "phone".
 #### Request
