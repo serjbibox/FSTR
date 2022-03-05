@@ -7,6 +7,7 @@
 - [Запрос статуса записи по ID](#Запрос-статуса-записи-по-ID)
 - [Редактирование записи](#Редактирование-записи)
 - [Bad request](#Bad-request)
+- [Инструкция по деплою](#Инструкция-по-деплою)
 
 # Создание записи
 ## POST /submitData
@@ -320,3 +321,17 @@ Status:
 Body:
 {"message" : "причина ошибки"}
 ```
+
+# Инструкция по деплою
+###Деплой на Google Cloud
+- зарегистрировать аккаунт Google Cloud
+- создать инстанс
+- Подключить Cloud Shell для Golang
+- Выбрать проект: $ gcloud config set project \ project-name
+- Клонировать репозиторий: $ git clone https://github.com/serjbibox/FSTR
+- Выбрать workspace $ cd \ cloud-deploy-tutorials/tutorials/base \ && cloudshell workspace
+- Настроить GKE кластер и инфраструктуру $ ./setup.sh
+- Проверить настройки $ gcloud container clusters list
+- Настроить файл app.Yaml, подключить переменные среды, для доступа к БД
+- Протестировать приложение в Cloud Shell
+- Можно деплоить: $ gcloud app deploy
