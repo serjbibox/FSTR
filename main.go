@@ -34,7 +34,7 @@ func main() {
 	r.Use(middleware.Recoverer)
 	r.Use(middleware.URLFormat)
 	r.Use(render.SetContentType(render.ContentTypeJSON))
-	r.Get("/*", httpSwagger.Handler(httpSwagger.URL("http://fstr-app.herokuapp.com//swagger/doc.json")))
+	r.Get("/*", httpSwagger.Handler(httpSwagger.URL("http://fstr-app.herokuapp.com/swagger/doc.json")))
 	
 	// API definition localhost
 	//r.Get("/*", httpSwagger.Handler(httpSwagger.URL("http://localhost:8080/swagger/doc.json")))
