@@ -3,6 +3,7 @@ package daos
 import (
 	"database/sql"
 	"errors"
+	"log"
 	"os"
 )
 
@@ -19,7 +20,7 @@ const (
 	FSTR_DB_PASS  = "FSTR_DB_PASS"
 	FSTR_DB_HOST  = "FSTR_DB_HOST"
 	FSTR_DB_PORT  = "FSTR_DB_PORT"
-	FSTR_DB_NAME  = "FSTR"
+	FSTR_DB_NAME  = "dci84nq5jb8beh"
 )
 
 var DB *sql.DB
@@ -39,8 +40,7 @@ func ConnStringConfig() (string, error) {
 			m[key] = d
 		}
 	}
-
-	return "postgres://" +
+	connString := "postgres://" +
 		m[FSTR_DB_LOGIN] +
 		":" +
 		m[FSTR_DB_PASS] +
@@ -49,7 +49,12 @@ func ConnStringConfig() (string, error) {
 		":" +
 		m[FSTR_DB_PORT] +
 		"/" +
-		FSTR_DB_NAME + "?sslmode=disable", nil
+		FSTR_DB_NAME // + "?sslmode=disable"
+
+	log.Println(connString)
+
+	return connString, nil
+
 }
 
 func readEnvironment(key string) string {
@@ -59,3 +64,8 @@ func readEnvironment(key string) string {
 		return env
 	}
 }
+
+//os.Setenv(FSTR_DB_LOGIN, "ppbwkxkrjzbksv")
+//os.Setenv(FSTR_DB_PASS, "ed30e87a9d372447e4910d34b84c653ac6f67209f6a4034390f791a810f6c8ca")
+//os.Setenv(FSTR_DB_HOST, "ec2-52-70-186-184.compute-1.amazonaws.com")
+//os.Setenv(FSTR_DB_PORT, "5432")
