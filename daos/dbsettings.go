@@ -64,8 +64,3 @@ func readEnvironment(key string) string {
 		return env
 	}
 }
-
-//os.Setenv(FSTR_DB_LOGIN, "ppbwkxkrjzbksv")
-//os.Setenv(FSTR_DB_PASS, "ed30e87a9d372447e4910d34b84c653ac6f67209f6a4034390f791a810f6c8ca")
-//os.Setenv(FSTR_DB_HOST, "ec2-52-70-186-184.compute-1.amazonaws.com")
-//os.Setenv(FSTR_DB_PORT, "5432")

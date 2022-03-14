@@ -57,6 +57,7 @@ func main() {
 		})
 	})
 	httpPort := ":"
+	//Чтение системной переменной PORT для деплоя на Heroku
 	if env, ok := os.LookupEnv("PORT"); !ok {
 		httpPort += "8080"
 	} else {
