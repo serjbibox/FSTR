@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/serjbibox/FSTR/apis"
 
@@ -55,7 +56,13 @@ func main() {
 			r.Put("/", apis.UpdatePass)
 		})
 	})
-	log.Panic(http.ListenAndServe(port, r))
+	httpPort := ":"
+	if env, ok := os.LookupEnv("PORT"); !ok {
+		httpPort += "8080"
+	} else {
+		httpPort += env
+	}
+	log.Panic(http.ListenAndServe(httpPort, r))
 }
 
 func Ctx(next http.Handler) http.Handler {
