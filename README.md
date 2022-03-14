@@ -19,7 +19,7 @@
 #### Request
 ```
 curl -X 'POST' \
-  'http://propane-facet-342315.ue.r.appspot.com/submitData' \
+  'http://fstr-app.herokuapp.com/submitData' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{request body}'
@@ -27,7 +27,7 @@ curl -X 'POST' \
 #### Request URL
 ```
 
-http://propane-facet-342315.ue.r.appspot.com/submitData
+http://fstr-app.herokuapp.com/submitData
 ```
  #### Request body
  ```
@@ -92,7 +92,7 @@ Status 200 OK
 ```
 
 curl -X 'GET' \
-  'http://propane-facet-342315.ue.r.appspot.com/submitData/' \
+  'http://fstr-app.herokuapp.com/submitData/' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{
@@ -112,7 +112,7 @@ OR
   ```
 #### Request URL
 ```
-http://propane-facet-342315.ue.r.appspot.com/submitData
+http://fstr-app.herokuapp.com/submitData
 ```
 #### Response
 #### Response body
@@ -160,12 +160,12 @@ http://propane-facet-342315.ue.r.appspot.com/submitData
 #### Request
 ```
 curl -X 'GET' \
-  'http://propane-facet-342315.ue.r.appspot.com/submitData/174' \
+  'http://fstr-app.herokuapp.com/submitData/174' \
   -H 'accept: application/json'
  ```
 #### Request URL
 ```
-http://propane-facet-342315.ue.r.appspot.com/submitData/174
+http://fstr-app.herokuapp.com/submitData/174
 ```
 #### Response
 #### Response body
@@ -221,7 +221,7 @@ http://propane-facet-342315.ue.r.appspot.com/submitData/174
 #### Request
 ```
 curl -X 'GET' \
-  'http://propane-facet-342315.ue.r.appspot.com/submitData/174/status' \
+  'http://fstr-app.herokuapp.com/submitData/174/status' \
   -H 'accept: application/json'
  ```
 #### Request URL
@@ -251,14 +251,14 @@ http://propane-facet-342315.ue.r.appspot.com/submitData/174/status
 #### Request
 ```
 curl -X 'PUT' \
-  'http://propane-facet-342315.ue.r.appspot.com/submitData/174' \
+  'http://fstr-app.herokuapp.com/submitData/174' \
   -H 'accept: application/json' \
   -H 'Content-Type: application/json' \
   -d '{request body}'
  ```
 #### Request URL
 ```
-http://propane-facet-342315.ue.r.appspot.com/submitData/174
+http://fstr-app.herokuapp.com/submitData/174
 ```
  #### Request body
  ```
