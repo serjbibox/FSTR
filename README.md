@@ -1,3 +1,4 @@
+*небольшие изменения: сервис переехал с Google Cloud на Heroku
 <h1 align="center">REST API для проекта ФСТР</h1>
 <h2 align="center"><a href="http://fstr-app.herokuapp.com" >Документация Swagger</a></h2>
 
